@@ -5,8 +5,7 @@ from warnings import warn
 import numpy as np
 
 from .data_structures import Model, Header, Object, Contour, Imat
-from .specification import id_spec, header_spec, object_spec, contour_spec, imat_spec, \
-    control_sequences
+from .specification import id_spec, header_spec, object_spec, contour_spec, imat_spec
 
 
 class ImodModelFileParser:
