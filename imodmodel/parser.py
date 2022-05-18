@@ -32,11 +32,11 @@ class ImodModelFileParser:
         self.file = open(self.filename, 'rb')
 
     def parse_id(self):
-        self.id = self.parse_from_constant_specification(self._id_spec)
+        self.id = self.parse_from_constant_specification(id_spec)
 
     def parse_header(self):
         header = Header()
-        header_data = self.parse_from_constant_specification(self._header_spec)
+        header_data = self.parse_from_constant_specification(header_spec)
         header.add_data_from_dict(header_data)
         self.model.header = header
 
@@ -47,7 +47,7 @@ class ImodModelFileParser:
         object = Object()
 
         # parse object header
-        object_header_data = self.parse_from_constant_specification(self._object_spec)
+        object_header_data = self.parse_from_constant_specification(object_spec)
         object.add_data_from_dict(object_header_data)
 
         # parse object data
@@ -64,8 +64,8 @@ class ImodModelFileParser:
 
     def parse_contour(self):
         contour = Contour()
-        data_keys = list(self._contour_spec.keys())
-        raw_format = self.format_from_specification(self._contour_spec)
+        data_keys = list(contour_spec.keys())
+        raw_format = self.format_from_specification(contour_spec)
 
         # read in number of points in contour
         contour.psize = int.from_bytes(self.read_from_buffer(4), byteorder='big')
@@ -89,7 +89,7 @@ class ImodModelFileParser:
 
     def parse_imat(self):
         imat = Imat()
-        imat_data = self.parse_from_constant_specification(self._imat_spec)
+        imat_data = self.parse_from_constant_specification(imat_spec)
         imat.add_data_from_dict(imat_data)
         return imat
 
@@ -112,30 +112,6 @@ class ImodModelFileParser:
 
     def close_file(self):
         self.file.close()
-
-    @property
-    def _control_sequences(self):
-        return control_sequences
-
-    @property
-    def _id_spec(self):
-        return id_spec
-
-    @property
-    def _header_spec(self):
-        return header_spec
-
-    @property
-    def _object_spec(self):
-        return object_spec
-
-    @property
-    def _contour_spec(self):
-        return contour_spec
-
-    @property
-    def _imat_spec(self):
-        return imat_spec
 
     @property
     def _parser_functions(self):

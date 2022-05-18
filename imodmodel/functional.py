@@ -11,4 +11,6 @@ def read(filename: os.PathLike) -> pd.DataFrame:
     ----------
     filename : file to read
     """
-    return ImodModelFileParser(filename).model.as_dataframe()
+    parser = ImodModelFileParser(filename)
+    parser.close_file()
+    return parser.model.as_dataframe()
