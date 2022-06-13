@@ -6,4 +6,4 @@
 [![CI](https://github.com/alisterburt/imodmodel/actions/workflows/ci.yml/badge.svg)](https://github.com/alisterburt/imodmodel/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/alisterburt/imodmodel/branch/main/graph/badge.svg)](https://codecov.io/gh/alisterburt/imodmodel)
 
-Read IMOD model files in Python
+IMOD model files in Python
