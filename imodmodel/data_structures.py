@@ -1,91 +1,154 @@
+from typing import Dict, Tuple, List, Optional
+
 import numpy as np
-
-from .specification import header_spec, object_spec, contour_spec, imat_spec
-
-
-class ImodDataStructure:
-    def _initialise_from_specification(self, specification):
-        for key in specification.keys():
-            self.__setattr__(key, None)
-
-    def add_data_from_dict(self, data):
-        for key, value in data.items():
-            self.__setattr__(key, value)
+from pydantic import BaseModel, validator
 
 
-class Model(ImodDataStructure):
-    def __init__(self):
-        self.header = None
-        self.objects = []
-
-    def add_object(self, object):
-        self.objects.append(object)
-
-    def as_contour_dict(self):
-        if len(self.objects) != 1:
-            raise ValueError('only working for simple models containing one object')
-
-        object = self.objects[0]
-        data = {contour_idx: contour.pt for contour_idx, contour in enumerate(object.contours)}
-        return data
-
-    def as_contour_array(self):
-        contour_data = self.as_contour_dict()
-        n = sum([contour.shape[0] for contour in contour_data.values()])
-        contour_array = np.empty((n, 4))
-
-        row = 0
-        for contour_idx, contour in contour_data.items():
-            previous_row = row
-            row += contour.shape[0]
-            contour_array[previous_row:row, :3] = contour
-            contour_array[previous_row:row, 3] = contour_idx
-
-        return contour_array
-
-    def as_dataframe(self):
-        import pandas as pd
-        columns = ['x', 'y', 'z', 'contour_idx']
-        df = pd.DataFrame(self.as_contour_array(), columns=columns)
-        return df
+class ID(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    IMOD_file_id: str
+    version_id: str
 
 
-class Object(ImodDataStructure):
-    def __init__(self):
-        self._initialise_from_specification(object_spec)
-        self.contours = []
-        self.meshes = []
-        self.imat = None
+class ModelHeader(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    name: str
+    xmax: int
+    ymax: int
+    zmax: int
+    objsize: int
+    flags: int
+    drawmode: int
+    mousemode: int
+    blacklevel: int
+    whitelevel: int
+    xoffset: float
+    yoffset: float
+    zoffset: float
+    xscale: float
+    yscale: float
+    zscale: float
+    object: int
+    contour: int
+    point: int
+    res: int
+    thresh: int
+    pixelsize: float
+    units: int
+    csum: int
+    alpha: float
+    beta: float
+    gamma: float
 
-    def add_data(self, data):
-        if isinstance(data, Contour):
-            self._add_contour(data)
-        elif isinstance(data, Mesh):
-            self._add_mesh(data)
-        elif isinstance(data, Imat):
-            self.imat = Imat
-
-    def _add_contour(self, contour):
-        self.contours.append(contour)
-
-    def _add_mesh(self, mesh):
-        self.meshes.append(mesh)
+    @validator('name', pre=True)
+    def decode_null_terminated_byte_string(cls, value: bytes):
+        end = value.find(b'\x00')
+        return value[:end].decode('utf-8')
 
 
-class Header(ImodDataStructure):
-    def __init__(self):
-        self._initialise_from_specification(header_spec)
+class ObjectHeader(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    name: str
+    extra_data: List[int]
+    contsize: int
+    flags: int
+    axis: int
+    drawmode: int
+    red: float
+    green: float
+    blue: float
+    pdrawsize: int
+    symbol: int
+    symsize: int
+    linewidth2: int
+    linewidth: int
+    linesty: int
+    symflags: int
+    sympad: int
+    trans: int
+    meshsize: int
+    surfsize: int
+
+    @validator('name', pre=True)
+    def decode_null_terminated_byte_string(cls, value: bytes):
+        end = value.find(b'\x00')
+        return value[:end].decode('utf-8')
 
 
-class Contour(ImodDataStructure):
-    def __init__(self):
-        self._initialise_from_specification(contour_spec)
+class ContourHeader(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    psize: int
+    flags: int
+    time: int
+    surf: int
 
 
-class Mesh(ImodDataStructure):
-    pass
+class Contour(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    header: ContourHeader
+    points: np.ndarray  # pt
+
+    class Config:
+        arbitrary_types_allowed = True
 
 
-class Imat(ImodDataStructure):
-    def __init__(self):
-        self._initialise_from_specification(imat_spec)
+class IMAT(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    ambient: int
+    diffuse: int
+    specular: int
+    shininess: int
+    fillred: int
+    fillgreen: int
+    fillblue: int
+    quality: int
+    mat2: int
+    valblack: int
+    valwhite: int
+    matflags2: int
+    mat3b3: int
+
+
+class Size(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    sizes: float
+
+
+class View(BaseModel):
+    fovy: float
+    rad: float
+    aspect: float
+    cnear: float
+    cfar: float
+    rot: Tuple[float, float, float]
+    trans: Tuple[float, float, float]
+    scale: Tuple[float, float, float]
+    mat: Tuple[
+        float, float, float, float,
+        float, float, float, float,
+        float, float, float, float,
+        float, float, float, float,
+    ]
+    world: int
+    label: str
+    dcstart: float
+    dcend: float
+    lightx: float
+    lighty: float
+    plax: float
+    objvsize: int
+    bytesObjv: int
+
+
+class Object(BaseModel):
+    contours: List[Contour] = []
+
+
+class Model(BaseModel):
+    id: ID
+    header: ModelHeader
+    objects: List[Object]
+    imat: Optional[IMAT]
+
+
+
