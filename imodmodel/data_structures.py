@@ -1,3 +1,4 @@
+import os
 from typing import Tuple, List, Optional
 
 import numpy as np
@@ -155,3 +156,11 @@ class Model(BaseModel):
     header: ModelHeader
     objects: List[Object]
     imat: Optional[IMAT]
+
+    @classmethod
+    def from_file(cls, filename: os.PathLike):
+        """Read an IMOD model from disk."""
+        from .parsers import parse_model
+        with open(filename, 'rb') as file:
+            return parse_model(file)
+
