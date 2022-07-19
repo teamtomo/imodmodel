@@ -1,1 +1,3 @@
-# from .functional import read
+from .functions import read
+
+__all__ = ["read"]
