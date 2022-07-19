@@ -62,7 +62,9 @@ def test_parse_model_header(two_contour_model_file_handle):
         (784, 'VIEW'),
     ]
 )
-def test_parse_control_sequence(two_contour_model_file_handle, position: int, expected: str):
+def test_parse_control_sequence(
+        two_contour_model_file_handle, position: int, expected: str
+):
     """Check that control sequences are correctly parsed."""
     two_contour_model_file_handle.seek(position)
     control_sequence = _parse_control_sequence(two_contour_model_file_handle)

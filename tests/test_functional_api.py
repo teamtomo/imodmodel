@@ -4,7 +4,6 @@ import pytest
 import imodmodel
 
 
-
 @pytest.mark.filterwarnings("ignore:UserWarning")
 def test_read(two_contour_model_file):
     """Test that reading a simple example file works."""

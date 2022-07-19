@@ -112,4 +112,3 @@ class IMODFileSpecification:
     MEPA = NotImplemented
     SKLI = NotImplemented
     OGRP = NotImplemented
-

@@ -19,7 +19,7 @@ from .specifications import IMODFileSpecification
 
 def _parse_from_specification(
     file: BinaryIO, specification: Dict[str, str]
-) -> dict[str, Any]:
+) -> Dict[str, Any]:
     format_str = f">{''.join(specification.values())}"
     data_1d = _parse_from_format_str(file, format_str)
     data = {}
