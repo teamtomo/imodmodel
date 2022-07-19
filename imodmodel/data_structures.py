@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, List, Optional
+from typing import Tuple, List, Optional
 
 import numpy as np
 from pydantic import BaseModel, validator
@@ -115,6 +115,7 @@ class Size(BaseModel):
 
 
 class View(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     fovy: float
     rad: float
     aspect: float
@@ -141,14 +142,16 @@ class View(BaseModel):
 
 
 class Object(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     contours: List[Contour] = []
 
 
 class Model(BaseModel):
+    """Contents of an IMOD model file.
+
+    https://bio3d.colorado.edu/imod/doc/binspec.html
+    """
     id: ID
     header: ModelHeader
     objects: List[Object]
     imat: Optional[IMAT]
-
-
-
