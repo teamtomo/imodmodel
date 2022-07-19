@@ -166,19 +166,19 @@ def test_parse_imat(two_contour_model_file_handle):
     two_contour_model_file_handle.seek(768)
     imat = _parse_imat(two_contour_model_file_handle)
     expected = {
-        'ambient': 102,
-        'diffuse': 255,
+        'ambient': 0,
+        'diffuse': 0,
         'fillblue': 0,
         'fillgreen': 0,
         'fillred': 0,
-        'mat2': 0,
-        'mat3b3': 0,
-        'matflags2': 0,
+        'mat2': 16711680,
+        'mat3b3': 87,
+        'matflags2': 69,
         'quality': 0,
-        'shininess': 4,
-        'specular': 127,
-        'valblack': 0,
-        'valwhite': 255
+        'shininess': 0,
+        'specular': 0,
+        'valblack': 86,
+        'valwhite': 73
     }
     assert imat.dict() == expected
     two_contour_model_file_handle.close()
