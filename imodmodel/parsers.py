@@ -92,7 +92,7 @@ def _parse_unknown(file: BufferedReader) -> None:
 
 def parse_model(file: BufferedReader) -> Model:
     id = _parse_id(file)
-    model_header = _parse_model_header(file)
+    header = _parse_model_header(file)
     control_sequence = _parse_control_sequence(file)
     imat = None
 
@@ -105,7 +105,7 @@ def parse_model(file: BufferedReader) -> Model:
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
-    return Model(id=id, model_header=model_header, objects=objects, imat=imat)
+    return Model(id=id, header=header, objects=objects, imat=imat)
 
 
 
