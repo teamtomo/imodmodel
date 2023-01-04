@@ -4,7 +4,7 @@ from typing import Any, BinaryIO, Dict, Tuple
 
 import numpy as np
 
-from .model_data import (
+from .models import (
     ID,
     IMAT,
     Contour,
@@ -14,7 +14,7 @@ from .model_data import (
     Object,
     ObjectHeader,
 )
-from .model_specification import ModFileSpecification
+from .binary_specification import ModFileSpecification
 
 
 def _parse_from_specification(
