@@ -2,11 +2,11 @@ from typing import List
 
 import pandas as pd
 
-from .data_structures import Contour, Model
+from .models import Contour, ImodModel
 
 
-def model_to_dataframe(model: Model) -> pd.DataFrame:
-    """Convert Model model into a pandas DataFrame."""
+def model_to_dataframe(model: ImodModel) -> pd.DataFrame:
+    """Convert ImodModel model into a pandas DataFrame."""
     contour_dfs: List[pd.DataFrame] = []
     for object_idx, object in enumerate(model.objects):
         for contour_idx, contour in enumerate(object.contours):
@@ -18,7 +18,7 @@ def model_to_dataframe(model: Model) -> pd.DataFrame:
 def contour_to_dataframe(
     contour: Contour, object_id: int, contour_id: int
 ) -> pd.DataFrame:
-    """Convert contour model into a pandas DataFrame."""
+    """Convert Contour model into a pandas DataFrame."""
     n_points = len(contour.points)
     contour_data = {
         "object_id": [object_id for _ in range(n_points)],

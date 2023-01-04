@@ -188,3 +188,4 @@ def test_parse_imat(two_contour_model_file_handle):
 def test_parse_model(two_contour_model_file_handle):
     """Check that model file is parsed correctly."""
     parse_model(two_contour_model_file_handle)
+    two_contour_model_file_handle.close()

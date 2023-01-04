@@ -1,4 +1,4 @@
-class IMODFileSpecification:
+class ModFileSpecification:
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     ID = {
         'IMOD_file_id': '4s',
