@@ -1,7 +1,7 @@
 import os
 import pandas as pd
-from .models import Model
-from .utils import model_to_dataframe
+from .models import ImodModel
+from .dataframe import model_to_dataframe
 
 
 def read(filename: os.PathLike) -> pd.DataFrame:
@@ -11,5 +11,5 @@ def read(filename: os.PathLike) -> pd.DataFrame:
     ----------
     filename : filename to read
     """
-    model = Model.from_file(filename)
+    model = ImodModel.from_file(filename)
     return model_to_dataframe(model)

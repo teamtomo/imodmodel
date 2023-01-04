@@ -147,7 +147,7 @@ class Object(BaseModel):
     contours: List[Contour] = []
 
 
-class Model(BaseModel):
+class ImodModel(BaseModel):
     """Contents of an IMOD model file.
 
     https://bio3d.colorado.edu/imod/doc/binspec.html

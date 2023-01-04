@@ -9,7 +9,7 @@ from .models import (
     IMAT,
     Contour,
     ContourHeader,
-    Model,
+    ImodModel,
     ModelHeader,
     Object,
     ObjectHeader,
@@ -96,7 +96,7 @@ def _parse_unknown(file: BinaryIO) -> None:
     file.read(bytes_to_skip)
 
 
-def parse_model(file: BinaryIO) -> Model:
+def parse_model(file: BinaryIO) -> ImodModel:
     id = _parse_id(file)
     header = _parse_model_header(file)
     control_sequence = _parse_control_sequence(file)
@@ -111,4 +111,4 @@ def parse_model(file: BinaryIO) -> Model:
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
-    return Model(id=id, header=header, objects=objects, imat=imat)
+    return ImodModel(id=id, header=header, objects=objects, imat=imat)
