@@ -1,15 +1,13 @@
-# imodmodel
+# Overview
 
 [![License](https://img.shields.io/pypi/l/imodmodel.svg?color=green)](https://github.com/alisterburt/imodmodel/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/imodmodel.svg?color=green)](https://pypi.org/project/imodmodel)
 [![Python Version](https://img.shields.io/pypi/pyversions/imodmodel.svg?color=green)](https://python.org)
-[![CI](https://github.com/alisterburt/imodmodel/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.
-com/alisterburt/imodmodel/actions/workflows/ci.yml)
+[![CI](https://github.com/alisterburt/imodmodel/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/alisterburt/imodmodel/actions/workflows/ci.yml)
 
 Read [IMOD model files](https://bio3d.colorado.edu/imod/doc/binspec.html) 
 as [pandas dataframes](https://pandas.pydata.org/) 
 in Python.
-
 
 ## Usage
 
