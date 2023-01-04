@@ -2,7 +2,7 @@ from typing import List
 
 import pandas as pd
 
-from .data_structures import Contour, Model
+from .model_data import Contour, Model
 
 
 def model_to_dataframe(model: Model) -> pd.DataFrame:

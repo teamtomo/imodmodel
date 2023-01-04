@@ -4,7 +4,7 @@ from typing import Any, BinaryIO, Dict, Tuple
 
 import numpy as np
 
-from .data_structures import (
+from .model_data import (
     ID,
     IMAT,
     Contour,
@@ -14,7 +14,7 @@ from .data_structures import (
     Object,
     ObjectHeader,
 )
-from .specifications import IMODFileSpecification
+from .model_specification import ModFileSpecification
 
 
 def _parse_from_specification(
@@ -23,13 +23,11 @@ def _parse_from_specification(
     format_str = f">{''.join(specification.values())}"
     data_1d = _parse_from_format_str(file, format_str)
     data = {}
-    i = 0  # index into data_1d
+    i = 0  # index into 1d data
     for key, value in specification.items():
         if value[0].isdigit() and value[-1] in "iIlLqQfd":  # parse multiple numbers
             n = int(re.match(r"\d+", value).group(0))  # type: ignore
-            # fmt: off
-            data[key] = data_1d[i: i + n]
-            # fmt: on
+            data[key] = data_1d[i:i+n]
             i += n - 1
         else:
             data[key] = data_1d[i]
@@ -43,17 +41,17 @@ def _parse_from_format_str(file: BinaryIO, format_str: str) -> Tuple[Any, ...]:
 
 
 def _parse_id(file: BinaryIO) -> ID:
-    data = _parse_from_specification(file, IMODFileSpecification.ID)
+    data = _parse_from_specification(file, ModFileSpecification.ID)
     return ID(**data)
 
 
 def _parse_model_header(file: BinaryIO) -> ModelHeader:
-    data = _parse_from_specification(file, IMODFileSpecification.MODEL_HEADER)
+    data = _parse_from_specification(file, ModFileSpecification.MODEL_HEADER)
     return ModelHeader(**data)
 
 
 def _parse_object_header(file: BinaryIO) -> ObjectHeader:
-    data = _parse_from_specification(file, IMODFileSpecification.OBJECT_HEADER)
+    data = _parse_from_specification(file, ModFileSpecification.OBJECT_HEADER)
     return ObjectHeader(**data)
 
 
@@ -67,7 +65,7 @@ def _parse_object(file: BinaryIO) -> Object:
 
 
 def _parse_contour_header(file: BinaryIO) -> ContourHeader:
-    data = _parse_from_specification(file, IMODFileSpecification.CONTOUR_HEADER)
+    data = _parse_from_specification(file, ModFileSpecification.CONTOUR_HEADER)
     return ContourHeader(**data)
 
 
@@ -89,7 +87,7 @@ def _parse_chunk_size(file: BinaryIO) -> int:
 
 def _parse_imat(file: BinaryIO) -> IMAT:
     _parse_chunk_size(file)
-    data = _parse_from_specification(file, IMODFileSpecification.IMAT)
+    data = _parse_from_specification(file, ModFileSpecification.IMAT)
     return IMAT(**data)
 
 

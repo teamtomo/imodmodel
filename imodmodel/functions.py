@@ -1,6 +1,6 @@
 import os
 import pandas as pd
-from .data_structures import Model
+from .model_data import Model
 from .utils import model_to_dataframe
 
 
