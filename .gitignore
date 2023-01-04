@@ -105,4 +105,4 @@ ENV/
 .vscode/
 .idea/
 
-imodmodel/_version.py
+src/imodmodel/_version.py
