@@ -3,7 +3,8 @@ from typing import Dict
 import numpy as np
 import pytest
 
-from imodmodel.parsers import _parse_id, _parse_model_header, _parse_control_sequence, \
+from imodmodel.parsers import _parse_id, _parse_model_header, \
+    _parse_control_sequence, \
     _parse_object_header, _parse_contour, _parse_imat, _parse_chunk_size, parse_model
 
 
