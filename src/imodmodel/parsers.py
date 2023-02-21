@@ -108,6 +108,8 @@ def parse_model(file: BinaryIO) -> ImodModel:
             objects.append(_parse_object(file))
         elif control_sequence == "IMAT":
             imat = _parse_imat(file)
+        elif control_sequence == "MESH":
+            break
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
