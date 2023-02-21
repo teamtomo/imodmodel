@@ -14,3 +14,9 @@ def two_contour_model_file() -> Path:
 def two_contour_model_file_handle(two_contour_model_file):
     """A file handle for a simple model with two contours."""
     return open(two_contour_model_file, mode='rb')
+
+
+@pytest.fixture
+def meshed_contour_model_file() -> Path:
+    """A model file with meshed contours."""
+    return TEST_DATA_DIRECTORY / 'meshed_contour_example.mod'
