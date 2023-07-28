@@ -61,6 +61,13 @@ class ModFileSpecification:
         'time': 'i',
         'surf': 'i',
     }
+    MESH_HEADER = {
+        'vsize': 'i',
+        'lsize': 'i',
+        'flag': 'I',
+        'time': 'h',
+        'surf': 'h',
+    }
     IMAT = {
         'ambient': 'B',
         'diffuse': 'B',

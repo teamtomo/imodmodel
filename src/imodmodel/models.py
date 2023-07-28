@@ -93,6 +93,24 @@ class Contour(BaseModel):
         arbitrary_types_allowed = True
 
 
+class MeshHeader(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    vsize: int
+    lsize: int
+    flag: int
+    time: int
+    surf: int
+
+class Mesh(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    header: MeshHeader
+    vertices: np.ndarray # vert
+    indices: List[np.ndarray] # list
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
 class IMAT(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     ambient: int
@@ -145,6 +163,7 @@ class View(BaseModel):
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     contours: List[Contour] = []
+    meshes: List[Mesh] = []
 
 
 class ImodModel(BaseModel):
