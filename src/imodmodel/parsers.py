@@ -45,6 +45,20 @@ def _parse_from_format_str(file: BinaryIO, format_str: str) -> Tuple[Any, ...]:
     return struct.unpack(file.read(struct.size))
 
 
+def _parse_from_type_flags(file: BinaryIO, flags: int) -> Any:
+    flag_mask, flag_int, flag_float, flag_short, flag_byte = 3, 0, 1, 2, 3
+    if flags & flag_mask == flag_int:
+        return _parse_from_format_str(file, '>i')[0]
+    elif flags & flag_mask == flag_float:
+        return _parse_from_format_str(file, '>f')[0]
+    elif flags & flag_mask == flag_short:
+        return _parse_from_format_str(file, '>2h')
+    elif flags & flag_mask == flag_byte:
+        return _parse_from_format_str(file, '>4c')
+    else:
+        raise ValueError(f'Invalid flags: {flags}')
+    
+
 def _parse_id(file: BinaryIO) -> ID:
     data = _parse_from_specification(file, ModFileSpecification.ID)
     return ID(**data)
@@ -118,8 +132,12 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
         raise ValueError(f"Chunk size not divisible by 12: {size}")
     storages = list()
     for _ in range(size // 12):
-        data = _parse_from_specification(file, ModFileSpecification.GENERAL_STORAGE)
-        storages.append(GeneralStorage(**data))
+        type, flags = _parse_from_format_str(file, '>hh')
+        index = _parse_from_type_flags(file, flags)
+        value = _parse_from_type_flags(file, flags>>2)
+        storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
+        # data = _parse_from_specification(file, ModFileSpecification.GENERAL_STORAGE)
+        # storages.append(GeneralStorage(**data))
     return storages
 
 

@@ -1,5 +1,5 @@
 import os
-from typing import Tuple, List, Optional
+from typing import Any, Tuple, List, Optional
 
 import numpy as np
 from pydantic import BaseModel, validator
@@ -15,8 +15,8 @@ class GeneralStorage(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     type: int
     flags: int
-    index: int
-    value: int
+    index: Any
+    value: Any
 
 
 class ModelHeader(BaseModel):
