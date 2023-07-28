@@ -11,6 +11,14 @@ class ID(BaseModel):
     version_id: str
 
 
+class GeneralStorage(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    type: int
+    flags: int
+    index: int
+    value: int
+
+
 class ModelHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     name: str
@@ -88,6 +96,7 @@ class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader
     points: np.ndarray  # pt
+    extra: List[GeneralStorage] = []
 
     class Config:
         arbitrary_types_allowed = True
@@ -106,6 +115,7 @@ class Mesh(BaseModel):
     header: MeshHeader
     vertices: List[np.ndarray] # vert
     indices: List[np.ndarray] # list
+    extra: List[GeneralStorage] = []
 
     class Config:
         arbitrary_types_allowed = True
@@ -164,6 +174,7 @@ class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     contours: List[Contour] = []
     meshes: List[Mesh] = []
+    extra: List[GeneralStorage] = []
 
 
 class ImodModel(BaseModel):
@@ -175,6 +186,7 @@ class ImodModel(BaseModel):
     header: ModelHeader
     objects: List[Object]
     imat: Optional[IMAT]
+    extra: List[GeneralStorage] = []
 
     @classmethod
     def from_file(cls, filename: os.PathLike):

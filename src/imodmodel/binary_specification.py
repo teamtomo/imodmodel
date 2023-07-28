@@ -111,10 +111,12 @@ class ModFileSpecification:
     OLBL = NotImplemented
     CLIP = NotImplemented
     MCLP = NotImplemented
-    MOST = NotImplemented
-    OBST = NotImplemented
-    COST = NotImplemented
-    MEST = NotImplemented
+    GENERAL_STORAGE = {
+        'type': 'h',
+        'flags': 'h',
+        'index': 'i',
+        'value': 'i',
+    }
     SLAN = NotImplemented
     MEPA = NotImplemented
     SKLI = NotImplemented

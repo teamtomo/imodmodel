@@ -1,6 +1,6 @@
 import re
 from struct import Struct
-from typing import Any, BinaryIO, Dict, Tuple
+from typing import Any, BinaryIO, Dict, List, Tuple
 
 import numpy as np
 
@@ -11,6 +11,7 @@ from .models import (
     IMAT,
     Contour,
     ContourHeader,
+    GeneralStorage,
     Mesh,
     MeshHeader,
     ImodModel,
@@ -60,16 +61,8 @@ def _parse_object_header(file: BinaryIO) -> ObjectHeader:
 
 
 def _parse_object(file: BinaryIO) -> Object:
-    header = _parse_object_header(file)
-    contours = []
-    meshes = []
-    for _ in range(header.contsize):
-        _parse_control_sequence(file)
-        contours.append(_parse_contour(file))
-    for _ in range(header.meshsize):
-        _parse_control_sequence(file)
-        meshes.append(_parse_mesh(file))
-    return Object(contours=contours, meshes=meshes)
+    _parse_object_header(file)
+    return Object()
 
 
 def _parse_contour_header(file: BinaryIO) -> ContourHeader:
@@ -119,6 +112,17 @@ def _parse_imat(file: BinaryIO) -> IMAT:
     return IMAT(**data)
 
 
+def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
+    size = _parse_chunk_size(file)
+    if size % 12 != 0:
+        raise ValueError(f"Chunk size not divisible by 12: {size}")
+    storages = list()
+    for _ in range(size // 12):
+        data = _parse_from_specification(file, ModFileSpecification.GENERAL_STORAGE)
+        storages.append(GeneralStorage(**data))
+    return storages
+
+
 def _parse_unknown(file: BinaryIO) -> None:
     bytes_to_skip = _parse_chunk_size(file)
     file.read(bytes_to_skip)
@@ -129,6 +133,7 @@ def parse_model(file: BinaryIO) -> ImodModel:
     header = _parse_model_header(file)
     control_sequence = _parse_control_sequence(file)
     imat = None
+    extra = list()
 
     objects = []
     while control_sequence != "IEOF":
@@ -136,7 +141,19 @@ def parse_model(file: BinaryIO) -> ImodModel:
             objects.append(_parse_object(file))
         elif control_sequence == "IMAT":
             imat = _parse_imat(file)
+        elif control_sequence == "CONT":
+            objects[-1].contours.append(_parse_contour(file))
+        elif control_sequence == "MESH":
+            objects[-1].meshes.append(_parse_mesh(file))
+        elif control_sequence == "MOST":
+            extra += _parse_general_storage(file)
+        elif control_sequence == "OBST":
+            objects[-1].extra += _parse_general_storage(file)
+        elif control_sequence == "COST":
+            objects[-1].contours[-1].extra += _parse_general_storage(file)
+        elif control_sequence == "MEST":
+            objects[-1].meshes[-1].extra += _parse_general_storage(file)
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
-    return ImodModel(id=id, header=header, objects=objects, imat=imat)
+    return ImodModel(id=id, header=header, objects=objects, imat=imat, extra=extra)
