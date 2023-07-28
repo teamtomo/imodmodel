@@ -104,7 +104,7 @@ class MeshHeader(BaseModel):
 class Mesh(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: MeshHeader
-    vertices: np.ndarray # vert
+    vertices: List[np.ndarray] # vert
     indices: List[np.ndarray] # list
 
     class Config:
