@@ -4,8 +4,6 @@ from typing import Any, BinaryIO, Dict, List, Tuple
 
 import numpy as np
 
-from imodmodel.mesh import cleanup_mesh, parse_imod_indices
-
 from .models import (
     ID,
     IMAT,
@@ -134,8 +132,6 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
         index = _parse_from_type_flags(file, flags)
         value = _parse_from_type_flags(file, flags>>2)
         storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
-        # data = _parse_from_specification(file, ModFileSpecification.GENERAL_STORAGE)
-        # storages.append(GeneralStorage(**data))
     return storages
 
 
