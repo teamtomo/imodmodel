@@ -98,17 +98,15 @@ def _parse_mesh_header(file: BinaryIO) -> MeshHeader:
 
 def _parse_mesh(file: BinaryIO) -> Mesh:
     header = _parse_mesh_header(file)
-    all_vertices = _parse_from_format_str(file, f">{'fff' * header.vsize}")
-    all_vertices = np.array(all_vertices).reshape((-1, 3))
-    all_indices = _parse_from_format_str(file, f">{'i' * header.lsize}")
-    all_indices = np.array(all_indices)
-    final_vertices = list()
-    final_indices = list()
-    for indices in parse_imod_indices(all_indices):
-        clean_vertices, clean_indices = cleanup_mesh(all_vertices, indices)
-        final_vertices.append(clean_vertices)
-        final_indices.append(clean_indices)
-    return Mesh(header=header, vertices=final_vertices, indices=final_indices)
+    vertices = _parse_from_format_str(file, f">{'fff' * header.vsize}")
+    vertices = np.array(vertices).reshape((-1, 3))
+    indices = _parse_from_format_str(file, f">{'i' * header.lsize}")
+    indices = np.array(indices)
+    # Only support the simplest mesh case, which is that each polygon
+    # starts with -25 and ends with -22, and the list is terminated by -1
+    if any(i in indices for i in (-20, -21, -23, -24)):
+        raise ValueError("This mesh type is not yet supported")
+    return Mesh(header=header, vertices=vertices, indices=indices)
 
 
 def _parse_control_sequence(file: BinaryIO) -> str:

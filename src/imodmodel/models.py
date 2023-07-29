@@ -113,12 +113,30 @@ class MeshHeader(BaseModel):
 class Mesh(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: MeshHeader
-    vertices: List[np.ndarray] # vert
-    indices: List[np.ndarray] # list
+    vertices: np.ndarray # vert
+    indices: np.ndarray # list
     extra: List[GeneralStorage] = []
 
     class Config:
         arbitrary_types_allowed = True
+
+    def reshaped_indices(self) -> np.ndarray:
+        return self.indices[np.where(self.indices >= 0)].reshape((-1, 3))
+
+    def extra_values(self) -> np.ndarray:
+        # The extra values are index, value  pairs
+        # However, the index is an index into the indices array,
+        # not directly an index of a vertex.
+        # Furthermore, the index has to be fixed because
+        # the original indices array has special command values (-25, -22, -1, ...)
+        values = np.zeros((len(self.vertices),))
+        for extra in self.extra:
+            if not (extra.type == 10 and isinstance(extra.index, int)):
+                continue
+            # removed_indices = np.nonzero(self.indices < 0)[0]
+            # index_fixed = extra.index - len(np.nonzero(removed_indices < extra.index)[0])
+            values[self.indices[extra.index]] = extra.value
+        return values
 
 
 class IMAT(BaseModel):
