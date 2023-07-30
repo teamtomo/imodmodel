@@ -60,7 +60,7 @@ def _parse_from_type_flags(file: BinaryIO, flags: int) -> Union[int, float, Tupl
     elif flags & flag_mask == flag_short:
         return _parse_from_format_str(file, '>2h')
     elif flags & flag_mask == flag_byte:
-        return _parse_from_format_str(file, '>4c')
+        return _parse_from_format_str(file, '>4b')
     else:
         raise ValueError(f'Invalid flags: {flags}')
     
