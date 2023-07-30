@@ -1,6 +1,6 @@
 import re
 from struct import Struct
-from typing import Any, BinaryIO, Dict, List, Tuple
+from typing import Any, BinaryIO, Dict, List, Tuple, Union
 
 import numpy as np
 
@@ -43,8 +43,16 @@ def _parse_from_format_str(file: BinaryIO, format_str: str) -> Tuple[Any, ...]:
     return struct.unpack(file.read(struct.size))
 
 
-def _parse_from_type_flags(file: BinaryIO, flags: int) -> Any:
-    flag_mask, flag_int, flag_float, flag_short, flag_byte = 3, 0, 1, 2, 3
+def _parse_from_type_flags(file: BinaryIO, flags: int) -> Union[int, float, Tuple[int, int], Tuple[int, int, int, int]]:
+    """Determine the next type from a flag, and parse the correct type.
+    The general storage chunks (MOST, OBST, MEST, COST) carry values as type unions.
+    The type of the union is stored in a 2-bit flag:
+    - 0b00: int
+    - 0b01: float
+    - 0b10: short, short
+    - 0b11: byte, byte, byte, byte
+    """
+    flag_mask, flag_int, flag_float, flag_short, flag_byte = 0b11, 0b00, 0b01, 0b10, 0b11
     if flags & flag_mask == flag_int:
         return _parse_from_format_str(file, '>i')[0]
     elif flags & flag_mask == flag_float:
