@@ -1,4 +1,6 @@
 from typing import Dict
+import struct
+from io import BytesIO
 
 import numpy as np
 import pytest
@@ -11,6 +13,8 @@ from imodmodel.parsers import (
     _parse_contour,
     _parse_imat,
     _parse_chunk_size,
+    _parse_from_type_flags,
+    _parse_general_storage,
     parse_model,
 )
 
@@ -190,6 +194,36 @@ def test_parse_imat(two_contour_model_file_handle):
     }
     assert imat.dict() == expected
     two_contour_model_file_handle.close()
+
+
+@pytest.mark.parametrize(
+    "bytes, flag, index_expected, value_expected",
+    [
+        (struct.pack('>ii', 1, 2), 0b000, 1, 2),
+        (struct.pack('>if', 1, 2.0), 0b0100, 1, 2.0),
+        (struct.pack('>ihh', 1, 2, 3), 0b1000, 1, (2, 3)),
+        (struct.pack('>i4b', 1, 2, 3, 4, 5), 0b1100, 1, (2, 3, 4, 5)),
+    ]
+)
+def test_parse_from_flags(bytes, flag, index_expected, value_expected):
+    """Check that unions are correctly parsed"""
+    bytes = BytesIO(bytes)
+    index = _parse_from_type_flags(bytes, flag)
+    value = _parse_from_type_flags(bytes, flag>>2)
+    assert index == index_expected
+    assert value == value_expected
+
+
+def test_parse_curvature(meshed_curvature_model_file_handle):
+    """Check that curvature values stored in GeneralStorage are correctly parsed"""
+    meshed_curvature_model_file_handle.seek(20924)
+    general_storages = _parse_general_storage(meshed_curvature_model_file_handle)
+    assert len(general_storages) == 377
+    for store in general_storages:
+        assert store.type == 10
+        assert store.flags == 4
+        assert isinstance(store.index, int)
+        assert isinstance(store.value, float)
 
 
 def test_parse_model(two_contour_model_file_handle):
