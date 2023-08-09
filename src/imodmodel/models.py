@@ -1,5 +1,5 @@
 import os
-from typing import Any, Tuple, List, Optional
+from typing import Tuple, List, Optional, Union
 
 import numpy as np
 from pydantic import BaseModel, validator
@@ -15,8 +15,11 @@ class GeneralStorage(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     type: int
     flags: int
-    index: Any
-    value: Any
+    index: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
+    value: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
+
+    class Config:
+        smart_union = True
 
 
 class ModelHeader(BaseModel):
