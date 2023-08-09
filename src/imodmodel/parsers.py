@@ -135,7 +135,8 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
     if size % 12 != 0:
         raise ValueError(f"Chunk size not divisible by 12: {size}")
     storages = list()
-    for _ in range(size // 12):
+    n_chunks = size // 12
+    for _ in range(n_chunks):
         type, flags = _parse_from_format_str(file, '>hh')
         index = _parse_from_type_flags(file, flags)
         value = _parse_from_type_flags(file, flags>>2)
