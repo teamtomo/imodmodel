@@ -1,4 +1,5 @@
 import os
+import warnings
 from typing import Tuple, List, Optional, Union
 
 import numpy as np
@@ -116,29 +117,59 @@ class MeshHeader(BaseModel):
 class Mesh(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: MeshHeader
-    vertices: np.ndarray # vert
-    indices: np.ndarray # list
+    raw_vertices: np.ndarray
+    raw_indices: np.ndarray
     extra: List[GeneralStorage] = []
 
     class Config:
         arbitrary_types_allowed = True
 
-    def reshaped_indices(self) -> np.ndarray:
-        return self.indices[np.where(self.indices >= 0)].reshape((-1, 3))
+    @validator('raw_indices')
+    @classmethod
+    def validate_indices(cls, indices: np.ndarray):
+        if indices.ndim > 1:
+            raise ValueError('indices must be 1D')
+        if indices[-1] != -1:
+            raise ValueError('Indices must end with -1')
+        if len(indices[np.where(indices >= 0)]) % 3 != 0:
+            raise ValueError(f'Invalid indices shape: {indices.shape}')
+        for i in (-20, -23, -24):
+            if i in indices:
+                warnings.warn(f'Unsupported mesh type: {i}')
+        return indices
 
-    def extra_values(self) -> np.ndarray:
-        # The extra values are index, value  pairs
-        # However, the index is an index into the indices array,
-        # not directly an index of a vertex.
-        # Furthermore, the index has to be fixed because
-        # the original indices array has special command values (-25, -22, -1, ...)
+    @validator('raw_vertices')
+    @classmethod
+    def validate_vertices(cls, vertices: np.ndarray):
+        if vertices.ndim > 1:
+            raise ValueError('vertices must be 1D')
+        if len(vertices) % 3 != 0:
+            raise ValueError(f'Invalid vertices shape: {vertices.shape}')
+
+        return vertices
+
+    @property
+    def vertices(self) -> np.ndarray:
+        return self.raw_vertices.reshape((-1, 3))
+
+    @property
+    def indices(self) -> np.ndarray:
+        return self.raw_indices[np.where(self.raw_indices >= 0)].reshape((-1, 3))
+
+    @property
+    def face_values(self) -> np.ndarray:
+        """Extra value for each vertex face.
+        The extra values are index, value  pairs
+        However, the index is an index into the indices array,
+        not directly an index of a vertex.
+        Furthermore, the index has to be fixed because
+        the original indices array has special command values (-25, -22, -1, ...)
+        """
         values = np.zeros((len(self.vertices),))
         for extra in self.extra:
             if not (extra.type == 10 and isinstance(extra.index, int)):
                 continue
-            # removed_indices = np.nonzero(self.indices < 0)[0]
-            # index_fixed = extra.index - len(np.nonzero(removed_indices < extra.index)[0])
-            values[self.indices[extra.index]] = extra.value
+            values[self.raw_indices[extra.index]] = extra.value
         return values
 
 

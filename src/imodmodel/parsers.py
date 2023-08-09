@@ -105,14 +105,14 @@ def _parse_mesh_header(file: BinaryIO) -> MeshHeader:
 def _parse_mesh(file: BinaryIO) -> Mesh:
     header = _parse_mesh_header(file)
     vertices = _parse_from_format_str(file, f">{'fff' * header.vsize}")
-    vertices = np.array(vertices).reshape((-1, 3))
+    vertices = np.array(vertices)
     indices = _parse_from_format_str(file, f">{'i' * header.lsize}")
     indices = np.array(indices)
     # Only support the simplest mesh case, which is that each polygon
     # starts with -25 and ends with -22, and the list is terminated by -1
     if any(i in indices for i in (-20, -21, -23, -24)):
         raise ValueError("This mesh type is not yet supported")
-    return Mesh(header=header, vertices=vertices, indices=indices)
+    return Mesh(header=header, raw_vertices=vertices, raw_indices=indices)
 
 
 def _parse_control_sequence(file: BinaryIO) -> str:
