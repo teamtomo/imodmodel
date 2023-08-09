@@ -145,7 +145,6 @@ class Mesh(BaseModel):
             raise ValueError('vertices must be 1D')
         if len(vertices) % 3 != 0:
             raise ValueError(f'Invalid vertices shape: {vertices.shape}')
-
         return vertices
 
     @property
