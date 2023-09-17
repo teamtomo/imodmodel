@@ -12,6 +12,8 @@ in Python.
 
 ## Usage
 
+### As pandas DataFrame
+
 ```python
 import imodmodel
 
@@ -29,6 +31,31 @@ Out[3]:
 4          0           0  76.000000  82.000000  80.0
 
 
+```
+
+### As ImodModel object
+
+```python
+from imodmodel import ImodModel
+model = ImodModel.from_file("my_model_file.mod")
+```
+
+```ipython
+In [3]: model.objects[0].contours[0].points
+Out[3]: 
+array([[  6.875,  62.875, 124.   ], ...])
+
+In [4]: model.objects[0].meshes[0].vertices
+Out[4]: 
+array([[ 6.87500000e+00,  6.28750000e+01,  1.24000000e+02], ...])
+
+In [5]: model.objects[0].meshes[0].indices
+Out[5]: 
+array([[156,  18, 152], ...])
+
+In [6]: model.objects[0].meshes[0].face_values
+Out[6]: 
+array([0., 0., 35.22094345, ...])
 ```
 
 That's it!
