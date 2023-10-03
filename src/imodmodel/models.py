@@ -156,7 +156,7 @@ class Mesh(BaseModel):
         return self.raw_indices[np.where(self.raw_indices >= 0)].reshape((-1, 3))
 
     @property
-    def face_values(self) -> np.ndarray:
+    def face_values(self) -> Optional[np.ndarray]:
         """Extra value for each vertex face.
         The extra values are index, value  pairs
         However, the index is an index into the indices array,
@@ -165,11 +165,14 @@ class Mesh(BaseModel):
         the original indices array has special command values (-25, -22, -1, ...)
         """
         values = np.zeros((len(self.vertices),))
+        has_face_values = False
         for extra in self.extra:
             if not (extra.type == 10 and isinstance(extra.index, int)):
                 continue
+            has_face_values = True
             values[self.raw_indices[extra.index]] = extra.value
-        return values
+        if has_face_values:
+            return values
 
 
 class IMAT(BaseModel):
