@@ -1,6 +1,6 @@
 import re
 from struct import Struct
-from typing import Any, BinaryIO, Dict, Tuple
+from typing import Any, BinaryIO, Dict, List, Tuple, Union
 
 import numpy as np
 
@@ -9,6 +9,9 @@ from .models import (
     IMAT,
     Contour,
     ContourHeader,
+    GeneralStorage,
+    Mesh,
+    MeshHeader,
     ImodModel,
     ModelHeader,
     Object,
@@ -40,6 +43,28 @@ def _parse_from_format_str(file: BinaryIO, format_str: str) -> Tuple[Any, ...]:
     return struct.unpack(file.read(struct.size))
 
 
+def _parse_from_type_flags(file: BinaryIO, flags: int) -> Union[int, float, Tuple[int, int], Tuple[int, int, int, int]]:
+    """Determine the next type from a flag, and parse the correct type.
+    The general storage chunks (MOST, OBST, MEST, COST) carry values as type unions.
+    The type of the union is stored in a 2-bit flag:
+    - 0b00: int
+    - 0b01: float
+    - 0b10: short, short
+    - 0b11: byte, byte, byte, byte
+    """
+    flag_mask, flag_int, flag_float, flag_short, flag_byte = 0b11, 0b00, 0b01, 0b10, 0b11
+    if flags & flag_mask == flag_int:
+        return _parse_from_format_str(file, '>i')[0]
+    elif flags & flag_mask == flag_float:
+        return _parse_from_format_str(file, '>f')[0]
+    elif flags & flag_mask == flag_short:
+        return _parse_from_format_str(file, '>2h')
+    elif flags & flag_mask == flag_byte:
+        return _parse_from_format_str(file, '>4b')
+    else:
+        raise ValueError(f'Invalid flags: {flags}')
+    
+
 def _parse_id(file: BinaryIO) -> ID:
     data = _parse_from_specification(file, ModFileSpecification.ID)
     return ID(**data)
@@ -56,12 +81,8 @@ def _parse_object_header(file: BinaryIO) -> ObjectHeader:
 
 
 def _parse_object(file: BinaryIO) -> Object:
-    header = _parse_object_header(file)
-    contours = []
-    for _ in range(header.contsize):
-        _parse_control_sequence(file)
-        contours.append(_parse_contour(file))
-    return Object(contours=contours)
+    _parse_object_header(file)
+    return Object()
 
 
 def _parse_contour_header(file: BinaryIO) -> ContourHeader:
@@ -74,6 +95,24 @@ def _parse_contour(file: BinaryIO) -> Contour:
     pt = _parse_from_format_str(file, f">{'fff' * header.psize}")
     pt = np.array(pt).reshape((-1, 3))
     return Contour(header=header, points=pt)
+
+
+def _parse_mesh_header(file: BinaryIO) -> MeshHeader:
+    data = _parse_from_specification(file, ModFileSpecification.MESH_HEADER)
+    return MeshHeader(**data)
+
+
+def _parse_mesh(file: BinaryIO) -> Mesh:
+    header = _parse_mesh_header(file)
+    vertices = _parse_from_format_str(file, f">{'fff' * header.vsize}")
+    vertices = np.array(vertices)
+    indices = _parse_from_format_str(file, f">{'i' * header.lsize}")
+    indices = np.array(indices)
+    # Only support the simplest mesh case, which is that each polygon
+    # starts with -25 and ends with -22, and the list is terminated by -1
+    if any(i in indices for i in (-20, -21, -23, -24)):
+        raise ValueError("This mesh type is not yet supported")
+    return Mesh(header=header, raw_vertices=vertices, raw_indices=indices)
 
 
 def _parse_control_sequence(file: BinaryIO) -> str:
@@ -91,6 +130,20 @@ def _parse_imat(file: BinaryIO) -> IMAT:
     return IMAT(**data)
 
 
+def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
+    size = _parse_chunk_size(file)
+    if size % 12 != 0:
+        raise ValueError(f"Chunk size not divisible by 12: {size}")
+    storages = list()
+    n_chunks = size // 12
+    for _ in range(n_chunks):
+        type, flags = _parse_from_format_str(file, '>hh')
+        index = _parse_from_type_flags(file, flags)
+        value = _parse_from_type_flags(file, flags>>2)
+        storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
+    return storages
+
+
 def _parse_unknown(file: BinaryIO) -> None:
     bytes_to_skip = _parse_chunk_size(file)
     file.read(bytes_to_skip)
@@ -101,6 +154,7 @@ def parse_model(file: BinaryIO) -> ImodModel:
     header = _parse_model_header(file)
     control_sequence = _parse_control_sequence(file)
     imat = None
+    extra = list()
 
     objects = []
     while control_sequence != "IEOF":
@@ -108,9 +162,19 @@ def parse_model(file: BinaryIO) -> ImodModel:
             objects.append(_parse_object(file))
         elif control_sequence == "IMAT":
             imat = _parse_imat(file)
+        elif control_sequence == "CONT":
+            objects[-1].contours.append(_parse_contour(file))
         elif control_sequence == "MESH":
-            break
+            objects[-1].meshes.append(_parse_mesh(file))
+        elif control_sequence == "MOST":
+            extra += _parse_general_storage(file)
+        elif control_sequence == "OBST":
+            objects[-1].extra += _parse_general_storage(file)
+        elif control_sequence == "COST":
+            objects[-1].contours[-1].extra += _parse_general_storage(file)
+        elif control_sequence == "MEST":
+            objects[-1].meshes[-1].extra += _parse_general_storage(file)
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
-    return ImodModel(id=id, header=header, objects=objects, imat=imat)
+    return ImodModel(id=id, header=header, objects=objects, imat=imat, extra=extra)

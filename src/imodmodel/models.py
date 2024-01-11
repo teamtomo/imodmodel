@@ -1,14 +1,28 @@
 import os
-from typing import Tuple, List, Optional
+import warnings
+from typing import Tuple, List, Optional, Union
 
 import numpy as np
 from pydantic import BaseModel, validator
+from pydantic.version import VERSION as PYDANTIC_VERSION
 
 
 class ID(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     IMOD_file_id: str
     version_id: str
+
+
+class GeneralStorage(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    type: int
+    flags: int
+    index: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
+    value: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
+
+    if PYDANTIC_VERSION < '2.0':
+        class Config:
+            smart_union = True
 
 
 class ModelHeader(BaseModel):
@@ -88,9 +102,79 @@ class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader
     points: np.ndarray  # pt
+    extra: List[GeneralStorage] = []
 
     class Config:
         arbitrary_types_allowed = True
+
+
+class MeshHeader(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    vsize: int
+    lsize: int
+    flag: int
+    time: int
+    surf: int
+
+class Mesh(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    header: MeshHeader
+    raw_vertices: np.ndarray
+    raw_indices: np.ndarray
+    extra: List[GeneralStorage] = []
+
+    class Config:
+        arbitrary_types_allowed = True
+
+    @validator('raw_indices')
+    @classmethod
+    def validate_indices(cls, indices: np.ndarray):
+        if indices.ndim > 1:
+            raise ValueError('indices must be 1D')
+        if indices[-1] != -1:
+            raise ValueError('Indices must end with -1')
+        if len(indices[np.where(indices >= 0)]) % 3 != 0:
+            raise ValueError(f'Invalid indices shape: {indices.shape}')
+        for i in (-20, -23, -24):
+            if i in indices:
+                warnings.warn(f'Unsupported mesh type: {i}')
+        return indices
+
+    @validator('raw_vertices')
+    @classmethod
+    def validate_vertices(cls, vertices: np.ndarray):
+        if vertices.ndim > 1:
+            raise ValueError('vertices must be 1D')
+        if len(vertices) % 3 != 0:
+            raise ValueError(f'Invalid vertices shape: {vertices.shape}')
+        return vertices
+
+    @property
+    def vertices(self) -> np.ndarray:
+        return self.raw_vertices.reshape((-1, 3))
+
+    @property
+    def indices(self) -> np.ndarray:
+        return self.raw_indices[np.where(self.raw_indices >= 0)].reshape((-1, 3))
+
+    @property
+    def face_values(self) -> Optional[np.ndarray]:
+        """Extra value for each vertex face.
+        The extra values are index, value  pairs
+        However, the index is an index into the indices array,
+        not directly an index of a vertex.
+        Furthermore, the index has to be fixed because
+        the original indices array has special command values (-25, -22, -1, ...)
+        """
+        values = np.zeros((len(self.vertices),))
+        has_face_values = False
+        for extra in self.extra:
+            if not (extra.type == 10 and isinstance(extra.index, int)):
+                continue
+            has_face_values = True
+            values[self.raw_indices[extra.index]] = extra.value
+        if has_face_values:
+            return values
 
 
 class IMAT(BaseModel):
@@ -145,6 +229,8 @@ class View(BaseModel):
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     contours: List[Contour] = []
+    meshes: List[Mesh] = []
+    extra: List[GeneralStorage] = []
 
 
 class ImodModel(BaseModel):
@@ -156,6 +242,7 @@ class ImodModel(BaseModel):
     header: ModelHeader
     objects: List[Object]
     imat: Optional[IMAT]
+    extra: List[GeneralStorage] = []
 
     @classmethod
     def from_file(cls, filename: os.PathLike):

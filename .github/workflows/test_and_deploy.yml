@@ -38,10 +38,11 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install setuptools pytest
+          pip install setuptools pytest pipx
           pip install -e .
+          pipx install hatch
       - name: Test with pytest
-        run: pytest -v -p no:warnings tests
+        run: hatch run all:test -v -p no:warnings tests
         env:
           PLATFORM: ${{ matrix.platform }}
 

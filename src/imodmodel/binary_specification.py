@@ -61,6 +61,13 @@ class ModFileSpecification:
         'time': 'i',
         'surf': 'i',
     }
+    MESH_HEADER = {
+        'vsize': 'i',
+        'lsize': 'i',
+        'flag': 'I',
+        'time': 'h',
+        'surf': 'h',
+    }
     IMAT = {
         'ambient': 'B',
         'diffuse': 'B',
@@ -104,10 +111,6 @@ class ModFileSpecification:
     OLBL = NotImplemented
     CLIP = NotImplemented
     MCLP = NotImplemented
-    MOST = NotImplemented
-    OBST = NotImplemented
-    COST = NotImplemented
-    MEST = NotImplemented
     SLAN = NotImplemented
     MEPA = NotImplemented
     SKLI = NotImplemented
