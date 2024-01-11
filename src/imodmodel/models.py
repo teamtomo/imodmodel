@@ -4,6 +4,7 @@ from typing import Tuple, List, Optional, Union
 
 import numpy as np
 from pydantic import BaseModel, validator
+from pydantic.version import VERSION as PYDANTIC_VERSION
 
 
 class ID(BaseModel):
@@ -19,8 +20,9 @@ class GeneralStorage(BaseModel):
     index: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
     value: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
 
-    class Config:
-        smart_union = True
+    if PYDANTIC_VERSION < '2.0':
+        class Config:
+            smart_union = True
 
 
 class ModelHeader(BaseModel):
