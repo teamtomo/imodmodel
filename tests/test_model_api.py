@@ -14,7 +14,6 @@ from imodmodel.models import Object, ObjectHeader, Contour, ContourHeader, Mesh,
 )
 def test_read(file, meshes_expected):
     """Check the model based API"""
-
     model = ImodModel.from_file(file)
     assert isinstance(model, ImodModel)
     assert len(model.objects) == 1
