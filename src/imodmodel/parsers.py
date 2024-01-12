@@ -81,8 +81,8 @@ def _parse_object_header(file: BinaryIO) -> ObjectHeader:
 
 
 def _parse_object(file: BinaryIO) -> Object:
-    _parse_object_header(file)
-    return Object()
+    header = _parse_object_header(file)
+    return Object(header=header)
 
 
 def _parse_contour_header(file: BinaryIO) -> ContourHeader:

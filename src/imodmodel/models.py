@@ -228,6 +228,7 @@ class View(BaseModel):
 
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    header: ObjectHeader
     contours: List[Contour] = []
     meshes: List[Mesh] = []
     extra: List[GeneralStorage] = []
