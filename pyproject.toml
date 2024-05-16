@@ -27,7 +27,7 @@ dynamic = ["version"]
 dependencies = [
     "numpy",
     "pandas",
-    "pydantic",
+    "pydantic>=2",
 ]
 
 # extras
@@ -112,11 +112,10 @@ test = "pytest {args:tests}"
 matrix-name-format = "{variable}_{value}"
 
 [[tool.hatch.envs.all.matrix]]
-pydantic_version = ["1","2"]
+pydantic_version = ["2"]
 
 [tool.hatch.envs.all.overrides]
 matrix.pydantic_version.dependencies = [
-    { value="pydantic<2", if = ["1"] },
     { value="pydantic>=2", if = ["2"] }
 ]
 
