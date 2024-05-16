@@ -42,7 +42,6 @@ dev = [
     "pre-commit",
     "pytest-cov",
     "pytest",
-    "pytest-lazy-fixture",
     "rich",
     "ruff",
     "mkdocs-material",
@@ -104,7 +103,6 @@ extend-ignore = [
 [tool.hatch.envs.default]
 dependencies = [
   "pytest",
-  "pytest-lazy-fixture",
 ]
 
 [tool.hatch.envs.default.scripts]
