@@ -3,7 +3,7 @@ import warnings
 from typing import Tuple, List, Optional, Union
 
 import numpy as np
-from pydantic import BaseModel, validator
+from pydantic import field_validator, ConfigDict, BaseModel
 from pydantic.version import VERSION as PYDANTIC_VERSION
 
 
@@ -19,10 +19,6 @@ class GeneralStorage(BaseModel):
     flags: int
     index: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
     value: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
-
-    if PYDANTIC_VERSION < '2.0':
-        class Config:
-            smart_union = True
 
 
 class ModelHeader(BaseModel):
@@ -55,7 +51,8 @@ class ModelHeader(BaseModel):
     beta: float
     gamma: float
 
-    @validator('name', pre=True)
+    @field_validator('name', mode="before")
+    @classmethod
     def decode_null_terminated_byte_string(cls, value: bytes):
         end = value.find(b'\x00')
         return value[:end].decode('utf-8')
@@ -84,7 +81,8 @@ class ObjectHeader(BaseModel):
     meshsize: int
     surfsize: int
 
-    @validator('name', pre=True)
+    @field_validator('name', mode="before")
+    @classmethod
     def decode_null_terminated_byte_string(cls, value: bytes):
         end = value.find(b'\x00')
         return value[:end].decode('utf-8')
@@ -104,8 +102,7 @@ class Contour(BaseModel):
     points: np.ndarray  # pt
     extra: List[GeneralStorage] = []
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class MeshHeader(BaseModel):
@@ -123,10 +120,9 @@ class Mesh(BaseModel):
     raw_indices: np.ndarray
     extra: List[GeneralStorage] = []
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
-    @validator('raw_indices')
+    @field_validator('raw_indices')
     @classmethod
     def validate_indices(cls, indices: np.ndarray):
         if indices.ndim > 1:
@@ -140,7 +136,7 @@ class Mesh(BaseModel):
                 warnings.warn(f'Unsupported mesh type: {i}')
         return indices
 
-    @validator('raw_vertices')
+    @field_validator('raw_vertices')
     @classmethod
     def validate_vertices(cls, vertices: np.ndarray):
         if vertices.ndim > 1:
@@ -242,7 +238,7 @@ class ImodModel(BaseModel):
     id: ID
     header: ModelHeader
     objects: List[Object]
-    imat: Optional[IMAT]
+    imat: Optional[IMAT] = None
     extra: List[GeneralStorage] = []
 
     @classmethod
