@@ -1,10 +1,9 @@
 import os
 import warnings
-from typing import Tuple, List, Optional, Union
+from typing import List, Optional, Tuple, Union
 
 import numpy as np
-from pydantic import field_validator, ConfigDict, BaseModel
-from pydantic.version import VERSION as PYDANTIC_VERSION
+from pydantic import BaseModel, ConfigDict, field_validator
 
 
 class ID(BaseModel):
