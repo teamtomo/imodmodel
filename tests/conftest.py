@@ -35,10 +35,10 @@ def meshed_curvature_model_file_handle(meshed_curvature_model_file):
 
 @pytest.fixture
 def slan_model_file() -> Path:
-    """A model file from mohammad's slicerangle measurements."""
+    """A model file from Mohammed's slicerangle measurements."""
     return TEST_DATA_DIRECTORY / 'slan_example.mod'
 
 @pytest.fixture
 def slan_model_file_handle(slan_model_file):
-    """A file handle with mohammad's slicerangle measurements."""
+    """A file handle with Mohammed's slicerangle measurements."""
     return open(slan_model_file, mode='rb')
