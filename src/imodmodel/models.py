@@ -221,11 +221,19 @@ class View(BaseModel):
     bytesObjv: int
 
 
+class SLAN(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    time: int
+    angles: Tuple[float,float,float]
+    center: Tuple[float,float,float]
+    label: str
+
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ObjectHeader
     contours: List[Contour] = []
     meshes: List[Mesh] = []
+    slans: List[SLAN] = []
     extra: List[GeneralStorage] = []
 
 

@@ -104,6 +104,13 @@ class ModFileSpecification:
         'objvsize': 'i',
         'bytesObjv': 'i'
     }
+    SLAN = {
+        'time': 'i',
+        'angles': '3f',
+        'center': '3f',
+        'label': '32c'
+    }
+
     SIZE = NotImplemented
     MESH = NotImplemented
     MINX = NotImplemented
@@ -111,7 +118,6 @@ class ModFileSpecification:
     OLBL = NotImplemented
     CLIP = NotImplemented
     MCLP = NotImplemented
-    SLAN = NotImplemented
     MEPA = NotImplemented
     SKLI = NotImplemented
     OGRP = NotImplemented
