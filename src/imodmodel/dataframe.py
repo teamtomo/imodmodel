@@ -5,11 +5,11 @@ import pandas as pd
 from .models import Contour, ImodModel, SLAN
 
 
-def model_to_dataframe(model: ImodModel) -> pd.DataFrame:
+def model_to_dataframe(model: ImodModel, annotation: str) -> pd.DataFrame:
     """Convert ImodModel model into a pandas DataFrame."""
     object_dfs: List[pd.DataFrame] = []
     for object_idx, object in enumerate(model.objects):
-        if hasattr(object, 'slans') and object.slans:
+        if annotation == 'slan':
             for slan_idx, slan in enumerate(object.slans):
                 slan_df = slan_to_dataframe(slan, object_idx, slan_idx)
                 object_dfs.append(slan_df)
