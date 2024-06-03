@@ -6,7 +6,7 @@ import imodmodel
 
 def test_read(two_contour_model_file, meshed_contour_model_file, slan_model_file):
     """Check that model files can be read."""
-    example_contour_files = [two_contour_model_file, meshed_contour_model_file]
+    example_contour_files = [two_contour_model_file, meshed_contour_model_file, slan_model_file]
     example_slan_files = [slan_model_file]
     expected_contour_columns = ['object_id', 'contour_id', 'x', 'y', 'z']
     expected_slan_columns = [
