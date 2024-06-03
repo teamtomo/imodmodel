@@ -5,18 +5,22 @@ import pandas as pd
 from .models import Contour, ImodModel, SLAN
 
 
-def model_to_dataframe(model: ImodModel, annotation: str) -> pd.DataFrame:
+def model_to_dataframe(model: ImodModel, annotation: str = 'contour') -> pd.DataFrame:
     """Convert ImodModel model into a pandas DataFrame."""
     object_dfs: List[pd.DataFrame] = []
     for object_idx, object in enumerate(model.objects):
         if annotation == 'slan':
+            if len(object.slans) == 0:
+                raise ValueError("Model has no SLANs.")
             for slan_idx, slan in enumerate(object.slans):
                 slan_df = slan_to_dataframe(slan, object_idx, slan_idx)
                 object_dfs.append(slan_df)
-        else:
+        elif annotation == 'contour':
             for contour_idx, contour in enumerate(object.contours):
                 contour_df = contour_to_dataframe(contour, object_idx, contour_idx)
                 object_dfs.append(contour_df)
+        else:
+            raise ValueError(f"Unknown annotation type: {annotation}")
     return pd.concat(object_dfs)
 
 

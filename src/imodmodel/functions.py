@@ -4,14 +4,13 @@ from .models import ImodModel
 from .dataframe import model_to_dataframe
 
 
-def read(filename: os.PathLike, annotation: str = None) -> pd.DataFrame:
+def read(filename: os.PathLike, annotation: str = 'contour') -> pd.DataFrame:
     """Read an IMOD model filename into a pandas DataFrame.
 
     Parameters
     ----------
     filename : filename to read
-    annotation: can specify slicer angle annotations by setting annotation='slan' if annotation=None,
-    contours are used instead.
+    annotation: which annotation of the model to return ['contour', 'slan'] (default: 'contour')
     """
     model = ImodModel.from_file(filename)
     return model_to_dataframe(model,annotation)

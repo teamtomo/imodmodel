@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 import imodmodel
 
@@ -22,4 +23,13 @@ def test_read(two_contour_model_file, meshed_contour_model_file, slan_model_file
         slan_df = imodmodel.read(file,annotation='slan')
         assert isinstance(slan_df, pd.DataFrame)
         assert all(col in expected_slan_columns for col in slan_df.columns)
-        
+
+def test_no_slan(two_contour_model_file):
+    """Check that an error is raised if a model with no SLANs is read with the 'slan' annotation."""
+    with pytest.raises(ValueError,match="Model has no SLANs."):
+        df = imodmodel.read(two_contour_model_file, annotation='slan')
+
+def test_unknown_annotation(two_contour_model_file):
+    """Check that an error is raised if an unknown annotation is requested."""
+    with pytest.raises(ValueError,match="Unknown annotation type: unknown"):
+        df = imodmodel.read(two_contour_model_file, annotation='unknown')
