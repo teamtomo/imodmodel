@@ -7,6 +7,7 @@ import numpy as np
 from .models import (
     ID,
     IMAT,
+    SLAN,
     Contour,
     ContourHeader,
     GeneralStorage,
@@ -143,6 +144,10 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
         storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
     return storages
 
+def _parse_slan(file: BinaryIO) -> SLAN:
+    _parse_chunk_size(file)
+    data = _parse_from_specification(file, ModFileSpecification.SLAN)
+    return SLAN(**data)
 
 def _parse_unknown(file: BinaryIO) -> None:
     bytes_to_skip = _parse_chunk_size(file)
@@ -174,6 +179,8 @@ def parse_model(file: BinaryIO) -> ImodModel:
             objects[-1].contours[-1].extra += _parse_general_storage(file)
         elif control_sequence == "MEST":
             objects[-1].meshes[-1].extra += _parse_general_storage(file)
+        elif control_sequence == "SLAN":
+            objects[-1].slans.append(_parse_slan(file))
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)

@@ -12,6 +12,7 @@ from imodmodel.parsers import (
     _parse_object_header,
     _parse_contour,
     _parse_imat,
+    _parse_slan,
     _parse_chunk_size,
     _parse_from_type_flags,
     _parse_general_storage,
@@ -195,6 +196,54 @@ def test_parse_imat(two_contour_model_file_handle):
     assert imat.dict() == expected
     two_contour_model_file_handle.close()
 
+@pytest.mark.parametrize(
+    'position, expected_time, expected_angles, expected_center, expected_label',
+    [
+        (
+            1047,
+            1,
+            np.array([13.100000, 0.0, -30.200001]),
+            np.array([235.519577, 682.744141, 302.0]),
+            '\x00'
+        ),
+        (
+            1115,
+            1,
+            np.array([-41.400002, 0.0, -47.700001]),
+            np.array([221.942444, 661.193237, 327.0]),
+            '\x00'
+        ),
+        (
+            1183,
+            1,
+            np.array([-41.400002, 0.0, -41.799999]),
+            np.array([232.790726, 671.332031, 327.0]),
+            '\x00'
+        ),
+        (
+            1251,
+            1,
+            np.array([-35.500000, 0.0, -36.000000]),
+            np.array([240.129181, 679.927795, 324.0]),
+            '\x00'
+        )
+    ]
+)
+def test_parse_slan(
+    slan_model_file_handle,
+    position: int,
+    expected_time: int,
+    expected_angles: np.ndarray,
+    expected_center: np.ndarray,
+    expected_label: str,
+):
+    slan_model_file_handle.seek(position)
+    slan = _parse_slan(slan_model_file_handle)
+    assert slan.time == expected_time
+    assert np.allclose(slan.angles,expected_angles)
+    assert np.allclose(slan.center,expected_center)
+    assert slan.label == expected_label
+    slan_model_file_handle.close()
 
 @pytest.mark.parametrize(
     "bytes, flag, index_expected, value_expected",
