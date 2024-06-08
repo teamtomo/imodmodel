@@ -37,7 +37,7 @@ These annotations can be read in by setting `annotation = 'slan'` when calling `
 ```python
 import imodmodel
 
-df = imodmodel.read('file_with_slicer_angles.mod')
+df = imodmodel.read('file_with_slicer_angles.mod', annotation='slan')
 ```
 
 ```ipython
