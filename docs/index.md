@@ -32,7 +32,7 @@ Out[3]:
 
 Annotations made in the [slicer window](https://bio3d.colorado.edu/imod/doc/3dmodHelp/slicer.html) are stored in the IMOD binary file with both centerpoints and angles.
 
-These annotations can be read in by setting `annotation = 'slan'` when calling `imodmodel.read()`
+These annotations can be read in by setting `annotation='slan'` when calling `imodmodel.read()`
 
 ```python
 import imodmodel
