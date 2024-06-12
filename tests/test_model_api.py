@@ -4,6 +4,7 @@ from imodmodel.models import (
     Contour,
     ContourHeader,
     Mesh,
+    IMAT,
     SLAN,
     MeshHeader,
     Object,
@@ -45,6 +46,26 @@ def test_read_slan(file_fixture_slan, request):
     file = request.getfixturevalue(file_fixture_slan)
     model = ImodModel.from_file(file)
     assert isinstance(model, ImodModel)
-    assert len(model.objects) == 1
+    assert len(model.slans) == 4
+    assert isinstance(model.slans, list)
+    assert isinstance(model.slans[0], SLAN)
+
+@pytest.mark.parametrize(
+    "file_fixture_multiple_objects, objects_expected", 
+    [
+        ('multiple_objects_model_file', 3),
+    ]
+)
+def test_multiple_objects(file_fixture_multiple_objects, objects_expected, request):
+    file = request.getfixturevalue(file_fixture_multiple_objects)
+    model = ImodModel.from_file(file)
+    assert isinstance(model, ImodModel)
+    assert len(model.objects) == objects_expected
     assert isinstance(model.objects[0], Object)
-    assert isinstance(model.objects[0].slans[0], SLAN)
+    assert isinstance(model.objects[0].imat, IMAT)
+    assert isinstance(model.objects[1].contours[0], Contour)
+    assert isinstance(model.objects[1], Object)
+    assert isinstance(model.objects[1].imat, IMAT)
+    assert isinstance(model.objects[2].contours[0], Contour)
+
+

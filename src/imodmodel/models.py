@@ -233,8 +233,8 @@ class Object(BaseModel):
     header: ObjectHeader
     contours: List[Contour] = []
     meshes: List[Mesh] = []
-    slans: List[SLAN] = []
     extra: List[GeneralStorage] = []
+    imat: Optional[IMAT] = None
 
 
 class ImodModel(BaseModel):
@@ -245,7 +245,7 @@ class ImodModel(BaseModel):
     id: ID
     header: ModelHeader
     objects: List[Object]
-    imat: Optional[IMAT] = None
+    slans: List[SLAN] = []
     extra: List[GeneralStorage] = []
 
     @classmethod

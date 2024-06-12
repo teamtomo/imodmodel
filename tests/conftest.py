@@ -42,3 +42,13 @@ def slan_model_file() -> Path:
 def slan_model_file_handle(slan_model_file):
     """A file handle with Mohammed's slicerangle measurements."""
     return open(slan_model_file, mode='rb')
+
+@pytest.fixture
+def multiple_objects_model_file() -> Path:
+    """A model file containing multiple object data."""
+    return TEST_DATA_DIRECTORY / 'multiple_objects_example.mod'
+
+@pytest.fixture
+def multiple_objects_model_file_handle(slan_model_file):
+    """A file handle with multiple object data."""
+    return open(slan_model_file, mode='rb')
