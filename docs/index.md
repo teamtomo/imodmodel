@@ -144,7 +144,6 @@ out[10]:
 SLAN(time=1, angles=(0.0, 0.0, 0.0), center=(533.5, 717.0, 126.0), label='\x00')
 ```
 
-
 That's it!
 
 ## Installation
