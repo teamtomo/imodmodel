@@ -229,7 +229,7 @@ def test_parse_imat(two_contour_model_file_handle):
         )
     ]
 )
-def test_parse_slicer_angle(
+def test_parse_slicer_angles(
     slicer_angle_model_file_handle,
     position: int,
     expected_time: int,
