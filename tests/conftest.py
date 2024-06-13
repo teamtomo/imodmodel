@@ -34,11 +34,21 @@ def meshed_curvature_model_file_handle(meshed_curvature_model_file):
     return open(meshed_curvature_model_file, mode='rb')
 
 @pytest.fixture
-def slan_model_file() -> Path:
+def slicer_angle_model_file() -> Path:
     """A model file from Mohammed's slicerangle measurements."""
-    return TEST_DATA_DIRECTORY / 'slan_example.mod'
+    return TEST_DATA_DIRECTORY / 'slicer_angle_example.mod'
 
 @pytest.fixture
-def slan_model_file_handle(slan_model_file):
+def slicer_angle_model_file_handle(slicer_angle_model_file):
     """A file handle with Mohammed's slicerangle measurements."""
-    return open(slan_model_file, mode='rb')
+    return open(slicer_angle_model_file, mode='rb')
+
+@pytest.fixture
+def multiple_objects_model_file() -> Path:
+    """A model file containing multiple object data."""
+    return TEST_DATA_DIRECTORY / 'multiple_objects_example.mod'
+
+@pytest.fixture
+def multiple_objects_model_file_handle(slicer_angle_model_file):
+    """A file handle with multiple object data."""
+    return open(slicer_angle_model_file, mode='rb')

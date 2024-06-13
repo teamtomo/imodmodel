@@ -144,7 +144,7 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
         storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
     return storages
 
-def _parse_slan(file: BinaryIO) -> SLAN:
+def _parse_slicer_angle(file: BinaryIO) -> SLAN:
     _parse_chunk_size(file)
     data = _parse_from_specification(file, ModFileSpecification.SLAN)
     return SLAN(**data)
@@ -158,7 +158,7 @@ def parse_model(file: BinaryIO) -> ImodModel:
     id = _parse_id(file)
     header = _parse_model_header(file)
     control_sequence = _parse_control_sequence(file)
-    imat = None
+    slicer_angles = []
     extra = list()
 
     objects = []
@@ -166,7 +166,7 @@ def parse_model(file: BinaryIO) -> ImodModel:
         if control_sequence == "OBJT":
             objects.append(_parse_object(file))
         elif control_sequence == "IMAT":
-            imat = _parse_imat(file)
+            objects[-1].imat = _parse_imat(file)
         elif control_sequence == "CONT":
             objects[-1].contours.append(_parse_contour(file))
         elif control_sequence == "MESH":
@@ -180,8 +180,8 @@ def parse_model(file: BinaryIO) -> ImodModel:
         elif control_sequence == "MEST":
             objects[-1].meshes[-1].extra += _parse_general_storage(file)
         elif control_sequence == "SLAN":
-            objects[-1].slans.append(_parse_slan(file))
+            slicer_angles.append(_parse_slicer_angle(file))
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
-    return ImodModel(id=id, header=header, objects=objects, imat=imat, extra=extra)
+    return ImodModel(id=id, header=header, objects=objects, slicer_angles=slicer_angles, extra=extra)

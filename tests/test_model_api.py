@@ -4,6 +4,7 @@ from imodmodel.models import (
     Contour,
     ContourHeader,
     Mesh,
+    IMAT,
     SLAN,
     MeshHeader,
     Object,
@@ -35,16 +36,36 @@ def test_read_contour(file_fixture_contour, meshes_expected, request):
         assert isinstance(model.objects[0].meshes[0].header, MeshHeader)
 
 @pytest.mark.parametrize(
-    "file_fixture_slan",
+    "file_fixture_slicer_angle",
     [
-        ('slan_model_file'),
+        ('slicer_angle_model_file'),
     ]
 )
-def test_read_slan(file_fixture_slan, request):
+def test_read_slicer_angle(file_fixture_slicer_angle, request):
     """Check the model based API"""
-    file = request.getfixturevalue(file_fixture_slan)
+    file = request.getfixturevalue(file_fixture_slicer_angle)
     model = ImodModel.from_file(file)
     assert isinstance(model, ImodModel)
-    assert len(model.objects) == 1
+    assert len(model.slicer_angles) == 4
+    assert isinstance(model.slicer_angles, list)
+    assert isinstance(model.slicer_angles[0], SLAN)
+
+@pytest.mark.parametrize(
+    "file_fixture_multiple_objects, objects_expected", 
+    [
+        ('multiple_objects_model_file', 3),
+    ]
+)
+def test_multiple_objects(file_fixture_multiple_objects, objects_expected, request):
+    file = request.getfixturevalue(file_fixture_multiple_objects)
+    model = ImodModel.from_file(file)
+    assert isinstance(model, ImodModel)
+    assert len(model.objects) == objects_expected
     assert isinstance(model.objects[0], Object)
-    assert isinstance(model.objects[0].slans[0], SLAN)
+    assert isinstance(model.objects[0].imat, IMAT)
+    assert isinstance(model.objects[1].contours[0], Contour)
+    assert isinstance(model.objects[1], Object)
+    assert isinstance(model.objects[1].imat, IMAT)
+    assert isinstance(model.objects[2].contours[0], Contour)
+
+

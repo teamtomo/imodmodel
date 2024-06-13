@@ -8,19 +8,19 @@ from .models import Contour, ImodModel, SLAN
 def model_to_dataframe(model: ImodModel, annotation: str = 'contour') -> pd.DataFrame:
     """Convert ImodModel model into a pandas DataFrame."""
     object_dfs: List[pd.DataFrame] = []
-    for object_idx, object in enumerate(model.objects):
-        if annotation == 'slan':
-            if len(object.slans) == 0:
-                raise ValueError("Model has no SLANs.")
-            for slan_idx, slan in enumerate(object.slans):
-                slan_df = slan_to_dataframe(slan, object_idx, slan_idx)
-                object_dfs.append(slan_df)
-        elif annotation == 'contour':
-            for contour_idx, contour in enumerate(object.contours):
-                contour_df = contour_to_dataframe(contour, object_idx, contour_idx)
-                object_dfs.append(contour_df)
-        else:
-            raise ValueError(f"Unknown annotation type: {annotation}")
+    if annotation == 'slicer_angles':
+        if len(model.slicer_angles) == 0:
+            raise ValueError("Model has no slicer angles.")
+        for slicer_angle_idx, slicer_angle in enumerate(model.slicer_angles):
+            slicer_angle_df = slicer_angle_to_dataframe(slicer_angle, slicer_angle_idx)
+            object_dfs.append(slicer_angle_df)
+    elif annotation == 'contour':
+        for object_idx, object in enumerate(model.objects):
+                for contour_idx, contour in enumerate(object.contours):
+                    contour_df = contour_to_dataframe(contour, object_idx, contour_idx)
+                    object_dfs.append(contour_df)
+    else:
+        raise ValueError(f"Unknown annotation type: {annotation}")
     return pd.concat(object_dfs)
 
 
@@ -39,18 +39,17 @@ def contour_to_dataframe(
     return pd.DataFrame(contour_data)
 
 
-def slan_to_dataframe(slan: SLAN, object_id: int, slan_id: int) -> pd.DataFrame:
-    """Convert SLAN model into a pandas DataFrame."""
-    slan_data = {
-        "object_id": [object_id],
-        "slan_id": [slan_id],
-        "time": [slan.time],
-        "x_rot": [slan.angles[0]],
-        "y_rot": [slan.angles[1]],
-        "z_rot": [slan.angles[2]],
-        "center_x": [slan.center[0]],
-        "center_y": [slan.center[1]],
-        "center_z": [slan.center[2]],
-        "label": [slan.label],
+def slicer_angle_to_dataframe(slicer_angle: SLAN, slicer_angle_id: int) -> pd.DataFrame:
+    """Convert slicer angle model into a pandas DataFrame."""
+    slicer_angle_data = {
+        "slicer_angle_id": [slicer_angle_id],
+        "time": [slicer_angle.time],
+        "x_rot": [slicer_angle.angles[0]],
+        "y_rot": [slicer_angle.angles[1]],
+        "z_rot": [slicer_angle.angles[2]],
+        "center_x": [slicer_angle.center[0]],
+        "center_y": [slicer_angle.center[1]],
+        "center_z": [slicer_angle.center[2]],
+        "label": [slicer_angle.label],
     }
-    return pd.DataFrame(slan_data)
+    return pd.DataFrame(slicer_angle_data)
