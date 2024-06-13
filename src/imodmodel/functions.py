@@ -10,7 +10,7 @@ def read(filename: os.PathLike, annotation: str = 'contour') -> pd.DataFrame:
     Parameters
     ----------
     filename : filename to read
-    annotation: which annotation of the model to return ['contour', 'slicer_angle'] (default: 'contour')
+    annotation: which annotation of the model to return ['contour', 'slicer_angles'] (default: 'contour')
     """
     model = ImodModel.from_file(filename)
     return model_to_dataframe(model,annotation)
