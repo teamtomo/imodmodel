@@ -5,7 +5,7 @@
 [![Python Version](https://img.shields.io/pypi/pyversions/imodmodel.svg?color=green)](https://python.org)
 [![CI](https://github.com/alisterburt/imodmodel/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/alisterburt/imodmodel/actions/workflows/ci.yml)
 
-Read object information from [IMOD model files](https://bio3d.colorado.edu/imod/doc/binspec.html) 
+Read [IMOD model files](https://bio3d.colorado.edu/imod/doc/binspec.html) 
 as [pandas dataframes](https://pandas.pydata.org/) 
 in Python.
 
