@@ -4,13 +4,13 @@ import pytest
 import imodmodel
 
 
-def test_read(two_contour_model_file, meshed_contour_model_file, slan_model_file):
+def test_read(two_contour_model_file, meshed_contour_model_file, slicer_angle_model_file):
     """Check that model files can be read."""
-    example_contour_files = [two_contour_model_file, meshed_contour_model_file, slan_model_file]
-    example_slan_files = [slan_model_file]
+    example_contour_files = [two_contour_model_file, meshed_contour_model_file, slicer_angle_model_file]
+    example_slicer_angle_files = [slicer_angle_model_file]
     expected_contour_columns = ['object_id', 'contour_id', 'x', 'y', 'z']
-    expected_slan_columns = [
-        'object_id', 'slan_id', 'time', 'x_rot', 'y_rot', 'z_rot', 'center_x',
+    expected_slicer_angle_columns = [
+        'object_id', 'slicer_angle_id', 'time', 'x_rot', 'y_rot', 'z_rot', 'center_x',
         'center_y', 'center_z', 'label']
 
     for file in example_contour_files:
@@ -19,15 +19,15 @@ def test_read(two_contour_model_file, meshed_contour_model_file, slan_model_file
         assert all(col in expected_contour_columns for col in contour_df.columns)
 
 
-    for file in example_slan_files:
-        slan_df = imodmodel.read(file,annotation='slan')
-        assert isinstance(slan_df, pd.DataFrame)
-        assert all(col in expected_slan_columns for col in slan_df.columns)
+    for file in example_slicer_angle_files:
+        slicer_angle_df = imodmodel.read(file,annotation='slicer_angle')
+        assert isinstance(slicer_angle_df, pd.DataFrame)
+        assert all(col in expected_slicer_angle_columns for col in slicer_angle_df.columns)
 
-def test_no_slan(two_contour_model_file):
-    """Check that an error is raised if a model with no SLANs is read with the 'slan' annotation."""
-    with pytest.raises(ValueError,match="Model has no SLANs."):
-        df = imodmodel.read(two_contour_model_file, annotation='slan')
+def test_no_slicer_angle(two_contour_model_file):
+    """Check that an error is raised if a model with no slicer_angles is read with the 'slicer_angle' annotation."""
+    with pytest.raises(ValueError,match="Model has no slicer angles."):
+        df = imodmodel.read(two_contour_model_file, annotation='slicer_angle')
 
 def test_unknown_annotation(two_contour_model_file):
     """Check that an error is raised if an unknown annotation is requested."""

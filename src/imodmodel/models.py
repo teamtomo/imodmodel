@@ -245,7 +245,7 @@ class ImodModel(BaseModel):
     id: ID
     header: ModelHeader
     objects: List[Object]
-    slans: List[SLAN] = []
+    slicer_angles: List[SLAN] = []
     extra: List[GeneralStorage] = []
 
     @classmethod

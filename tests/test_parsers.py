@@ -12,7 +12,7 @@ from imodmodel.parsers import (
     _parse_object_header,
     _parse_contour,
     _parse_imat,
-    _parse_slan,
+    _parse_slicer_angle,
     _parse_chunk_size,
     _parse_from_type_flags,
     _parse_general_storage,
@@ -229,21 +229,21 @@ def test_parse_imat(two_contour_model_file_handle):
         )
     ]
 )
-def test_parse_slan(
-    slan_model_file_handle,
+def test_parse_slicer_angle(
+    slicer_angle_model_file_handle,
     position: int,
     expected_time: int,
     expected_angles: np.ndarray,
     expected_center: np.ndarray,
     expected_label: str,
 ):
-    slan_model_file_handle.seek(position)
-    slan = _parse_slan(slan_model_file_handle)
-    assert slan.time == expected_time
-    assert np.allclose(slan.angles,expected_angles)
-    assert np.allclose(slan.center,expected_center)
-    assert slan.label == expected_label
-    slan_model_file_handle.close()
+    slicer_angle_model_file_handle.seek(position)
+    slicer_angle = _parse_slicer_angle(slicer_angle_model_file_handle)
+    assert slicer_angle.time == expected_time
+    assert np.allclose(slicer_angle.angles,expected_angles)
+    assert np.allclose(slicer_angle.center,expected_center)
+    assert slicer_angle.label == expected_label
+    slicer_angle_model_file_handle.close()
 
 @pytest.mark.parametrize(
     "bytes, flag, index_expected, value_expected",

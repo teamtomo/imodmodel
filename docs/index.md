@@ -33,18 +33,18 @@ Out[3]:
 Slicer angles saved in the [slicer window](https://bio3d.colorado.edu/imod/doc/3dmodHelp/slicer.html) 
 are stored in the IMOD binary file with both centerpoints and angles.
 
-These annotations can be read in by setting `annotation='slan'` when calling `imodmodel.read()`
+These annotations can be read in by setting `annotation='slicer_angle'` when calling `imodmodel.read()`
 
 ```python
 import imodmodel
 
-df = imodmodel.read('file_with_slicer_angles.mod', annotation='slan')
+df = imodmodel.read('file_with_slicer_angles.mod', annotation='slicer_angle')
 ```
 
 ```ipython
 In [3]: df.head()
 Out[3]:
-   object_id  slan_id  time      x_rot  y_rot      z_rot    center_x    center_y  center_z label
+   object_id  slicer_angle_id  time      x_rot  y_rot      z_rot    center_x    center_y  center_z label
 0          0        0     1  13.100000    0.0 -30.200001  235.519577  682.744141     302.0
 0          0        1     1 -41.400002    0.0 -47.700001  221.942444  661.193237     327.0
 0          0        2     1 -41.400002    0.0 -41.799999  232.790726  671.332031     327.0
@@ -65,7 +65,7 @@ my_model = ImodModel.from_file("my_model_file.mod")
 ```ipython
 in [3]: my_model.model_field_set
 out[3]: 
-{'id', 'extra', 'objects', 'slans', 'header'}
+{'id', 'extra', 'objects', 'slicer_angles', 'header'}
 ```
 
 ### my_model.id
@@ -134,12 +134,12 @@ array([[367.00006104, 661.83343506, 134.        ],
        [474.33340454, 662.50012207, 134.        ]])
 ```
 
-### my_model.slans
+### my_model.slicer_angles
 
-`my_model.slans` is a `list` of slicer angles.
+`my_model.slicer_angles` is a `list` of slicer angles.
 
 ```ipython
-in [10]: my_model.slans[0]
+in [10]: my_model.slicer_angles[0]
 out[10]:
 SLAN(time=1, angles=(0.0, 0.0, 0.0), center=(533.5, 717.0, 126.0), label='\x00')
 ```
