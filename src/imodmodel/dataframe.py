@@ -8,7 +8,7 @@ from .models import Contour, ImodModel, SLAN
 def model_to_dataframe(model: ImodModel, annotation: str = 'contour') -> pd.DataFrame:
     """Convert ImodModel model into a pandas DataFrame."""
     object_dfs: List[pd.DataFrame] = []
-    if annotation == 'slicer_angle':
+    if annotation == 'slicer_angles':
         if len(model.slicer_angles) == 0:
             raise ValueError("Model has no slicer angles.")
         for slicer_angle_idx, slicer_angle in enumerate(model.slicer_angles):
