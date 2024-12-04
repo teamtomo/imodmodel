@@ -83,7 +83,6 @@ class ModFileSpecification:
         'matflags2': 'B',
         'mat3b3': 'B'
     }
-
     VIEW = {
         'fovy': 'f',
         'rad': 'f',
@@ -110,10 +109,16 @@ class ModFileSpecification:
         'center': '3f',
         'label': '32c'
     }
-
+    MINX = {
+        'oscale': '3f',
+        'otrans': '3f',
+        'orot': '3f',
+        'cscale': '3f',
+        'ctrans': '3f',
+        'crot': '3f',
+    }
     SIZE = NotImplemented
     MESH = NotImplemented
-    MINX = NotImplemented
     LABL = NotImplemented
     OLBL = NotImplemented
     CLIP = NotImplemented

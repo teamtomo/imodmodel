@@ -188,6 +188,15 @@ class IMAT(BaseModel):
     matflags2: int
     mat3b3: int
 
+class MINX(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    oscale: Tuple[float, float, float]
+    otrans: Tuple[float, float, float]
+    orot: Tuple[float, float, float]
+    cscale: Tuple[float, float, float]
+    ctrans: Tuple[float, float, float]
+    crot: Tuple[float, float, float]
+
 
 class Size(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
@@ -246,6 +255,7 @@ class ImodModel(BaseModel):
     header: ModelHeader
     objects: List[Object]
     slicer_angles: List[SLAN] = []
+    minx: Optional[MINX]
     extra: List[GeneralStorage] = []
 
     @classmethod
