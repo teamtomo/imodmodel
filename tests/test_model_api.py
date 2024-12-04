@@ -69,3 +69,13 @@ def test_multiple_objects(file_fixture_multiple_objects, objects_expected, reque
     assert isinstance(model.objects[2].contours[0], Contour)
 
 
+def test_read_minx(meshed_contour_model_file):
+    """Check reading of model to image transformation information."""
+    model = ImodModel.from_file(meshed_contour_model_file)
+    assert isinstance(model, ImodModel)
+    assert model.minx.cscale == pytest.approx((10.680000, 10.680000, 10.680000), abs=1e-6)
+    assert model.minx.ctrans == pytest.approx((-2228.0, 2228.0, 681.099976), abs=1e-6)
+    assert model.minx.crot == pytest.approx((0.0, 0.0, 0.0), abs=1e-6)
+
+
+

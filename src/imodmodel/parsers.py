@@ -13,6 +13,7 @@ from .models import (
     GeneralStorage,
     Mesh,
     MeshHeader,
+    MINX,
     ImodModel,
     ModelHeader,
     Object,
@@ -130,6 +131,10 @@ def _parse_imat(file: BinaryIO) -> IMAT:
     data = _parse_from_specification(file, ModFileSpecification.IMAT)
     return IMAT(**data)
 
+def _parse_minx(file: BinaryIO) -> MINX:
+    _parse_chunk_size(file)
+    data = _parse_from_specification(file, ModFileSpecification.MINX)
+    return MINX(**data)
 
 def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
     size = _parse_chunk_size(file)
@@ -159,6 +164,7 @@ def parse_model(file: BinaryIO) -> ImodModel:
     header = _parse_model_header(file)
     control_sequence = _parse_control_sequence(file)
     slicer_angles = []
+    minx = None
     extra = list()
 
     objects = []
@@ -181,7 +187,9 @@ def parse_model(file: BinaryIO) -> ImodModel:
             objects[-1].meshes[-1].extra += _parse_general_storage(file)
         elif control_sequence == "SLAN":
             slicer_angles.append(_parse_slicer_angle(file))
+        elif control_sequence == "MINX":
+            minx = _parse_minx(file)
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
-    return ImodModel(id=id, header=header, objects=objects, slicer_angles=slicer_angles, extra=extra)
+    return ImodModel(id=id, header=header, objects=objects, slicer_angles=slicer_angles, minx=minx, extra=extra)
