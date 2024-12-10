@@ -79,6 +79,7 @@ def test_read_minx(meshed_contour_model_file):
 
 
 def test_write_scattered_points(tmp_path):
+    """Check writing of scattered points model. Test by parsing the written file."""
     import numpy as np
 
     model = ImodModel.new()
