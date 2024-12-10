@@ -289,5 +289,3 @@ class ImodModel(BaseModel):
         self.header.objsize = len(self.objects)
         with open(filename, 'wb') as file:
             write_model(file, self)
-
-    
