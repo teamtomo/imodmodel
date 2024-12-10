@@ -22,33 +22,33 @@ class GeneralStorage(BaseModel):
 
 class ModelHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    name: str
-    xmax: int
-    ymax: int
-    zmax: int
-    objsize: int
-    flags: int
-    drawmode: int
-    mousemode: int
-    blacklevel: int
-    whitelevel: int
-    xoffset: float
-    yoffset: float
-    zoffset: float
-    xscale: float
-    yscale: float
-    zscale: float
-    object: int
-    contour: int
-    point: int
-    res: int
-    thresh: int
-    pixelsize: float
-    units: int
-    csum: int
-    alpha: float
-    beta: float
-    gamma: float
+    name: str = 'IMOD-NewModel'
+    xmax: int = 0
+    ymax: int = 0
+    zmax: int = 0
+    objsize: int = 0
+    flags: int = 402653704
+    drawmode: int = 1
+    mousemode: int = 2
+    blacklevel: int = 0
+    whitelevel: int = 255
+    xoffset: float = 0.0
+    yoffset: float = 0.0
+    zoffset: float = 0.0
+    xscale: float = 1.0
+    yscale: float = 1.0
+    zscale: float = 1.0
+    object: int = 0
+    contour: int = 0
+    point: int = -1
+    res: int = 3
+    thresh: int = 128
+    pixelsize: float = 1.0
+    units: int = 0
+    csum: int = 0
+    alpha: float = 0.0
+    beta: float = 0.0
+    gamma: float = 0.0
 
     @field_validator('name', mode="before")
     @classmethod
@@ -246,7 +246,7 @@ class Object(BaseModel):
     imat: Optional[IMAT] = None
 
     @classmethod
-    def scattered_points(cls, points: np.ndarray, size = 2):
+    def new_scattered_points(cls, points: np.ndarray, size = 2):
         """Create a new object with scattered points."""
         return cls(
                 header=ObjectHeader(
@@ -304,11 +304,11 @@ class ImodModel(BaseModel):
 
     https://bio3d.colorado.edu/imod/doc/binspec.html
     """
-    id: ID
-    header: ModelHeader
-    objects: List[Object]
+    id: ID = ID(IMOD_file_id='IMOD', version_id='V1.2')
+    header: ModelHeader = ModelHeader()
+    objects: List[Object] = []
     slicer_angles: List[SLAN] = []
-    minx: Optional[MINX]
+    minx: Optional[MINX] = None
     extra: List[GeneralStorage] = []
 
     @classmethod
@@ -325,43 +325,4 @@ class ImodModel(BaseModel):
         with open(filename, 'wb') as file:
             write_model(file, self)
 
-    @classmethod
-    def new(cls):
-        """Create a new, empty model."""
-        return cls(
-                id=ID(IMOD_file_id='IMOD', version_id='V1.2'),
-                header=ModelHeader(
-                    name=b'IMOD-NewModel', 
-                    xmax=0, 
-                    ymax=0, 
-                    zmax=0, 
-                    objsize=1, 
-                    flags=15872, 
-                    drawmode=1, 
-                    mousemode=2, 
-                    blacklevel=0, 
-                    whitelevel=255, 
-                    xoffset=0.0, 
-                    yoffset=0.0, 
-                    zoffset=0.0, 
-                    xscale=1.0, 
-                    yscale=1.0, 
-                    zscale=1.0, 
-                    object=0, 
-                    contour=0, 
-                    point=-1, 
-                    res=3, 
-                    thresh=128, 
-                    pixelsize=1.0, 
-                    units=0, 
-                    csum=0, 
-                    alpha=0.0, 
-                    beta=0.0, 
-                    gamma=0.0),
-                objects=[],
-                slicer_angles=[], 
-                minx=None, 
-                extra=[]
-                )
     
-

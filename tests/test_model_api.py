@@ -82,8 +82,8 @@ def test_write_scattered_points(tmp_path):
     """Check writing of scattered points model. Test by parsing the written file."""
     import numpy as np
 
-    model = ImodModel.new()
-    model.objects.append(Object.scattered_points(
+    model = ImodModel()
+    model.objects.append(Object.new_scattered_points(
         points=np.array([(1, 2, 3), (0, 1, 1), (8, 4, 5)])
     ))
     model.to_file(tmp_path / "scattered_points_model.imod")
