@@ -317,6 +317,12 @@ class ImodModel(BaseModel):
         from .parsers import parse_model
         with open(filename, 'rb') as file:
             return parse_model(file)
+    
+    def to_file(self, filename: os.PathLike):
+        """Write an IMOD model to disk."""
+        from .writers import write_model
+        with open(filename, 'wb') as file:
+            write_model(file, self)
 
     @classmethod
     def new(cls):
