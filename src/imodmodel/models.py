@@ -246,7 +246,7 @@ class Object(BaseModel):
     imat: Optional[IMAT] = None
 
     @classmethod
-    def new_scattered_points(cls, points: np.ndarray, size = 2):
+    def new_scattered_points_object(cls, points: np.ndarray, size = 2):
         """Create a new object with scattered points."""
         return cls(
                 header=ObjectHeader(contsize=1),

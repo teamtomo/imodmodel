@@ -83,9 +83,25 @@ def test_write_scattered_points(tmp_path):
     import numpy as np
 
     model = ImodModel()
-    model.objects.append(Object.new_scattered_points(
+    model.objects.append(Object.new_scattered_points_object(
         points=np.array([(1, 2, 3), (0, 1, 1), (8, 4, 5)])
     ))
     model.to_file(tmp_path / "scattered_points_model.imod")
     second_model = ImodModel.from_file(tmp_path / "scattered_points_model.imod")
     assert np.allclose(model.objects[0].contours[0].points, second_model.objects[0].contours[0].points)
+
+def test_write_multiple_scattered_points(tmp_path):
+    """Check writing of scattered points model. Test by parsing the written file."""
+    import numpy as np
+
+    model = ImodModel()
+    model.objects.append(Object.new_scattered_points_object(
+        points=np.array([(1, 2, 3), (0, 1, 1), (8, 4, 5)])
+    ))
+    model.objects.append(Object.new_scattered_points_object(
+        points=np.array([(9, 0, 1), (8.2, 1, 1), (8.9, 4, 5)])
+    ))
+    model.to_file(tmp_path / "multiple_scattered_points_model.imod")
+    second_model = ImodModel.from_file(tmp_path / "multiple_scattered_points_model.imod")
+    assert np.allclose(model.objects[0].contours[0].points, second_model.objects[0].contours[0].points)
+    assert np.allclose(model.objects[1].contours[0].points, second_model.objects[1].contours[0].points)
