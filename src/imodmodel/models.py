@@ -59,26 +59,26 @@ class ModelHeader(BaseModel):
 
 class ObjectHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    name: str
-    extra_data: List[int]
-    contsize: int
-    flags: int
-    axis: int
-    drawmode: int
-    red: float
-    green: float
-    blue: float
-    pdrawsize: int
-    symbol: int
-    symsize: int
-    linewidth2: int
-    linewidth: int
-    linesty: int
-    symflags: int
-    sympad: int
-    trans: int
-    meshsize: int
-    surfsize: int
+    name: str = ''
+    extra_data: List[int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    contsize: int = 1
+    flags: int = 402653704
+    axis: int = 0
+    drawmode: int = 1
+    red: float = 0.0
+    green: float = 1.0
+    blue: float = 0.0
+    pdrawsize: int = 2
+    symbol: int = 1
+    symsize: int = 3
+    linewidth2: int = 1
+    linewidth: int = 1
+    linesty: int = 0
+    symflags: int = 0
+    sympad: int = 0
+    trans: int = 0
+    meshsize: int = 0
+    surfsize: int = 0
 
     @field_validator('name', mode="before")
     @classmethod
@@ -174,19 +174,19 @@ class Mesh(BaseModel):
 
 class IMAT(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    ambient: int
-    diffuse: int
-    specular: int
-    shininess: int
-    fillred: int
-    fillgreen: int
-    fillblue: int
-    quality: int
-    mat2: int
-    valblack: int
-    valwhite: int
-    matflags2: int
-    mat3b3: int
+    ambient: int = 102
+    diffuse: int = 255
+    specular: int = 127
+    shininess: int = 4
+    fillred: int = 0
+    fillgreen: int = 0
+    fillblue: int = 0
+    quality: int = 0
+    mat2: int = 0
+    valblack: int = 0
+    valwhite: int = 255
+    matflags2: int = 0 
+    mat3b3: int = 0
 
 class MINX(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
@@ -239,7 +239,7 @@ class SLAN(BaseModel):
 
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    header: ObjectHeader
+    header: ObjectHeader = ObjectHeader()
     contours: List[Contour] = []
     meshes: List[Mesh] = []
     extra: List[GeneralStorage] = []
@@ -249,27 +249,7 @@ class Object(BaseModel):
     def new_scattered_points(cls, points: np.ndarray, size = 2):
         """Create a new object with scattered points."""
         return cls(
-                header=ObjectHeader(
-                    name=b'', 
-                    extra_data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-                    contsize=1, 
-                    flags=402653704, 
-                    axis=0, 
-                    drawmode=1, 
-                    red=0.0, 
-                    green=1.0, 
-                    blue=0.0, 
-                    pdrawsize=size, 
-                    symbol=1, 
-                    symsize=3, 
-                    linewidth2=1, 
-                    linewidth=1, 
-                    linesty=0, 
-                    symflags=0, 
-                    sympad=0, 
-                    trans=0, 
-                    meshsize=0, 
-                    surfsize=0), 
+                header=ObjectHeader(contsize=1),
                 contours=[
                     Contour(header=ContourHeader(
                         psize=len(points), 
@@ -280,22 +260,7 @@ class Object(BaseModel):
                         extra=[]
                         )
                     ], 
-                meshes=[], 
-                extra=[], 
-                imat=IMAT(
-                    ambient=102, 
-                    diffuse=255, 
-                    specular=127, 
-                    shininess=4, 
-                    fillred=0, 
-                    fillgreen=0, 
-                    fillblue=0, 
-                    quality=0, 
-                    mat2=0, 
-                    valblack=0, 
-                    valwhite=255, 
-                    matflags2=0, 
-                    mat3b3=0)
+                imat = IMAT()    
             )
 
 
