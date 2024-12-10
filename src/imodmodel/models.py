@@ -321,6 +321,7 @@ class ImodModel(BaseModel):
     def to_file(self, filename: os.PathLike):
         """Write an IMOD model to disk."""
         from .writers import write_model
+        self.header.objsize = len(self.objects)
         with open(filename, 'wb') as file:
             write_model(file, self)
 
