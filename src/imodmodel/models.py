@@ -245,6 +245,59 @@ class Object(BaseModel):
     extra: List[GeneralStorage] = []
     imat: Optional[IMAT] = None
 
+    @classmethod
+    def scattered_points(cls, points: np.ndarray, size = 2):
+        """Create a new object with scattered points."""
+        return cls(
+                header=ObjectHeader(
+                    name=b'', 
+                    extra_data=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
+                    contsize=1, 
+                    flags=402653704, 
+                    axis=0, 
+                    drawmode=1, 
+                    red=0.0, 
+                    green=1.0, 
+                    blue=0.0, 
+                    pdrawsize=size, 
+                    symbol=1, 
+                    symsize=3, 
+                    linewidth2=1, 
+                    linewidth=1, 
+                    linesty=0, 
+                    symflags=0, 
+                    sympad=0, 
+                    trans=0, 
+                    meshsize=0, 
+                    surfsize=0), 
+                contours=[
+                    Contour(header=ContourHeader(
+                        psize=len(points), 
+                        flags=16, 
+                        time=0, 
+                        surf=0), 
+                        points=points,
+                        extra=[]
+                        )
+                    ], 
+                meshes=[], 
+                extra=[], 
+                imat=IMAT(
+                    ambient=102, 
+                    diffuse=255, 
+                    specular=127, 
+                    shininess=4, 
+                    fillred=0, 
+                    fillgreen=0, 
+                    fillblue=0, 
+                    quality=0, 
+                    mat2=0, 
+                    valblack=0, 
+                    valwhite=255, 
+                    matflags2=0, 
+                    mat3b3=0)
+            )
+
 
 class ImodModel(BaseModel):
     """Contents of an IMOD model file.
@@ -264,4 +317,44 @@ class ImodModel(BaseModel):
         from .parsers import parse_model
         with open(filename, 'rb') as file:
             return parse_model(file)
+
+    @classmethod
+    def new(cls):
+        """Create a new, empty model."""
+        return cls(
+                id=ID(IMOD_file_id='IMOD', version_id='V1.2'),
+                header=ModelHeader(
+                    name=b'IMOD-NewModel', 
+                    xmax=0, 
+                    ymax=0, 
+                    zmax=0, 
+                    objsize=1, 
+                    flags=15872, 
+                    drawmode=1, 
+                    mousemode=2, 
+                    blacklevel=0, 
+                    whitelevel=255, 
+                    xoffset=0.0, 
+                    yoffset=0.0, 
+                    zoffset=0.0, 
+                    xscale=1.0, 
+                    yscale=1.0, 
+                    zscale=1.0, 
+                    object=0, 
+                    contour=0, 
+                    point=-1, 
+                    res=3, 
+                    thresh=128, 
+                    pixelsize=1.0, 
+                    units=0, 
+                    csum=0, 
+                    alpha=0.0, 
+                    beta=0.0, 
+                    gamma=0.0),
+                objects=[],
+                slicer_angles=[], 
+                minx=None, 
+                extra=[]
+                )
+    
 

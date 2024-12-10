@@ -78,4 +78,12 @@ def test_read_minx(meshed_contour_model_file):
     assert model.minx.crot == pytest.approx((0.0, 0.0, 0.0), abs=1e-6)
 
 
-
+def test_write_scattered_points():
+    import numpy as np
+    
+    model = ImodModel.new()
+    model.objects.append(Object.scattered_points(
+        points=np.array([(1, 2, 3), (0, 1, 1), (8, 4, 5)])
+    ))
+    print(model)
+    assert False
