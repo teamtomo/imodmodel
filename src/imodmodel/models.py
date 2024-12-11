@@ -237,6 +237,7 @@ class SLAN(BaseModel):
     center: Tuple[float,float,float]
     label: str
 
+
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ObjectHeader = ObjectHeader()
@@ -244,24 +245,6 @@ class Object(BaseModel):
     meshes: List[Mesh] = []
     extra: List[GeneralStorage] = []
     imat: Optional[IMAT] = None
-
-    @classmethod
-    def new_scattered_points_object(cls, points: np.ndarray, size = 2):
-        """Create a new object with scattered points."""
-        return cls(
-                header=ObjectHeader(contsize=1),
-                contours=[
-                    Contour(header=ContourHeader(
-                        psize=len(points), 
-                        flags=16, 
-                        time=0, 
-                        surf=0), 
-                        points=points,
-                        extra=[]
-                        )
-                    ], 
-                imat = IMAT()    
-            )
 
 
 class ImodModel(BaseModel):
