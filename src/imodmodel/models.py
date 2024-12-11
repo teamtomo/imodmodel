@@ -22,33 +22,33 @@ class GeneralStorage(BaseModel):
 
 class ModelHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    name: str
-    xmax: int
-    ymax: int
-    zmax: int
-    objsize: int
-    flags: int
-    drawmode: int
-    mousemode: int
-    blacklevel: int
-    whitelevel: int
-    xoffset: float
-    yoffset: float
-    zoffset: float
-    xscale: float
-    yscale: float
-    zscale: float
-    object: int
-    contour: int
-    point: int
-    res: int
-    thresh: int
-    pixelsize: float
-    units: int
-    csum: int
-    alpha: float
-    beta: float
-    gamma: float
+    name: str = 'IMOD-NewModel'
+    xmax: int = 0
+    ymax: int = 0
+    zmax: int = 0
+    objsize: int = 0
+    flags: int = 402653704
+    drawmode: int = 1
+    mousemode: int = 2
+    blacklevel: int = 0
+    whitelevel: int = 255
+    xoffset: float = 0.0
+    yoffset: float = 0.0
+    zoffset: float = 0.0
+    xscale: float = 1.0
+    yscale: float = 1.0
+    zscale: float = 1.0
+    object: int = 0
+    contour: int = 0
+    point: int = -1
+    res: int = 3
+    thresh: int = 128
+    pixelsize: float = 1.0
+    units: int = 0
+    csum: int = 0
+    alpha: float = 0.0
+    beta: float = 0.0
+    gamma: float = 0.0
 
     @field_validator('name', mode="before")
     @classmethod
@@ -59,26 +59,26 @@ class ModelHeader(BaseModel):
 
 class ObjectHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    name: str
-    extra_data: List[int]
-    contsize: int
-    flags: int
-    axis: int
-    drawmode: int
-    red: float
-    green: float
-    blue: float
-    pdrawsize: int
-    symbol: int
-    symsize: int
-    linewidth2: int
-    linewidth: int
-    linesty: int
-    symflags: int
-    sympad: int
-    trans: int
-    meshsize: int
-    surfsize: int
+    name: str = ''
+    extra_data: List[int] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    contsize: int = 1
+    flags: int = 402653704
+    axis: int = 0
+    drawmode: int = 1
+    red: float = 0.0
+    green: float = 1.0
+    blue: float = 0.0
+    pdrawsize: int = 2
+    symbol: int = 1
+    symsize: int = 3
+    linewidth2: int = 1
+    linewidth: int = 1
+    linesty: int = 0
+    symflags: int = 0
+    sympad: int = 0
+    trans: int = 0
+    meshsize: int = 0
+    surfsize: int = 0
 
     @field_validator('name', mode="before")
     @classmethod
@@ -174,19 +174,19 @@ class Mesh(BaseModel):
 
 class IMAT(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    ambient: int
-    diffuse: int
-    specular: int
-    shininess: int
-    fillred: int
-    fillgreen: int
-    fillblue: int
-    quality: int
-    mat2: int
-    valblack: int
-    valwhite: int
-    matflags2: int
-    mat3b3: int
+    ambient: int = 102
+    diffuse: int = 255
+    specular: int = 127
+    shininess: int = 4
+    fillred: int = 0
+    fillgreen: int = 0
+    fillblue: int = 0
+    quality: int = 0
+    mat2: int = 0
+    valblack: int = 0
+    valwhite: int = 255
+    matflags2: int = 0 
+    mat3b3: int = 0
 
 class MINX(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
@@ -237,9 +237,10 @@ class SLAN(BaseModel):
     center: Tuple[float,float,float]
     label: str
 
+
 class Object(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    header: ObjectHeader
+    header: ObjectHeader = ObjectHeader()
     contours: List[Contour] = []
     meshes: List[Mesh] = []
     extra: List[GeneralStorage] = []
@@ -251,11 +252,11 @@ class ImodModel(BaseModel):
 
     https://bio3d.colorado.edu/imod/doc/binspec.html
     """
-    id: ID
-    header: ModelHeader
-    objects: List[Object]
+    id: ID = ID(IMOD_file_id='IMOD', version_id='V1.2')
+    header: ModelHeader = ModelHeader()
+    objects: List[Object] = []
     slicer_angles: List[SLAN] = []
-    minx: Optional[MINX]
+    minx: Optional[MINX] = None
     extra: List[GeneralStorage] = []
 
     @classmethod
@@ -264,4 +265,10 @@ class ImodModel(BaseModel):
         from .parsers import parse_model
         with open(filename, 'rb') as file:
             return parse_model(file)
-
+    
+    def to_file(self, filename: os.PathLike):
+        """Write an IMOD model to disk."""
+        from .writers import write_model
+        self.header.objsize = len(self.objects)
+        with open(filename, 'wb') as file:
+            write_model(file, self)
