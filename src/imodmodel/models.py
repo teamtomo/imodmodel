@@ -19,6 +19,10 @@ class GeneralStorage(BaseModel):
     index: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
     value: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
 
+class PointSize(BaseModel):
+    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
+    sizes: np.ndarray
+
 
 class ModelHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
@@ -26,7 +30,7 @@ class ModelHeader(BaseModel):
     xmax: int = 0
     ymax: int = 0
     zmax: int = 0
-    objsize: int = 0
+    objsize: int = 0  
     flags: int = 402653704
     drawmode: int = 1
     mousemode: int = 2
@@ -99,6 +103,7 @@ class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader
     points: np.ndarray  # pt
+    psizes: Optional[PointSize] = None
     extra: List[GeneralStorage] = []
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -196,12 +201,6 @@ class MINX(BaseModel):
     cscale: Tuple[float, float, float]
     ctrans: Tuple[float, float, float]
     crot: Tuple[float, float, float]
-
-
-class Size(BaseModel):
-    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    sizes: float
-
 
 class View(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""

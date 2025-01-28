@@ -11,6 +11,7 @@ from .models import (
     Contour,
     ContourHeader,
     GeneralStorage,
+    PointSize,
     Mesh,
     MeshHeader,
     MINX,
@@ -97,6 +98,11 @@ def _write_contour(file: BinaryIO, contour: Contour):
     _write_contour_header(file, contour.header)
     points = contour.points.flatten()
     _write_to_format_str(file, f">{'f' * len(points)}", points)
+
+    if contour.psizes:
+        psizes = contour.psizes.sizes.flatten()
+        _write_control_sequence(file, "SIZE")
+        _write_to_format_str(file, f">{'f' * len(psizes)}", psizes)
     if contour.extra:
         _write_general_storage(file, contour.extra)
 
