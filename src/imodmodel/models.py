@@ -22,6 +22,7 @@ class GeneralStorage(BaseModel):
 class PointSize(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     sizes: np.ndarray
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class ModelHeader(BaseModel):
