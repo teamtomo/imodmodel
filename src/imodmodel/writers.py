@@ -90,6 +90,12 @@ def _write_chunk_size(file: BinaryIO, size: int):
     file.write(size.to_bytes(4, byteorder="big"))
 
 
+def _write_pointsize(file: BinaryIO, psizes: PointSize):
+    psizes = psizes.radii.flatten()
+    _write_control_sequence(file, "SIZE")
+    _write_chunk_size(file, 4 *  len(psizes))
+    _write_to_format_str(file, f">{'f' * len(psizes)}", psizes)
+
 def _write_control_sequence(file: BinaryIO, sequence: str):
     file.write(sequence.encode("utf-8"))
 
@@ -100,9 +106,7 @@ def _write_contour(file: BinaryIO, contour: Contour):
     _write_to_format_str(file, f">{'f' * len(points)}", points)
 
     if contour.psizes:
-        psizes = contour.psizes.sizes.flatten()
-        _write_control_sequence(file, "SIZE")
-        _write_to_format_str(file, f">{'f' * len(psizes)}", psizes)
+        _write_pointsize(file, contour.psizes)
     if contour.extra:
         _write_general_storage(file, contour.extra)
 

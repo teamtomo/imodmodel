@@ -152,9 +152,9 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
 
 def _parse_pointsize(file: BinaryIO, psize : int) -> PointSize:
     _parse_chunk_size(file)
-    sizes = _parse_from_format_str(file, f">{'f' * psize}")
-    sizes = np.array(sizes).reshape(-1)
-    return PointSize(sizes=sizes)
+    radii = _parse_from_format_str(file, f">{'f' * psize}")
+    radii = np.array(radii).reshape(-1)
+    return PointSize(radii=radii)
 
 def _parse_slicer_angle(file: BinaryIO) -> SLAN:
     _parse_chunk_size(file)
