@@ -91,10 +91,10 @@ def _write_chunk_size(file: BinaryIO, size: int):
 
 
 def _write_pointsize(file: BinaryIO, psizes: PointSize):
-    psizes = psizes.radii.flatten()
+    radii = psizes.radii.flatten()
     _write_control_sequence(file, "SIZE")
-    _write_chunk_size(file, 4 *  len(psizes))
-    _write_to_format_str(file, f">{'f' * len(psizes)}", psizes)
+    _write_chunk_size(file, 4 *  len(radii))
+    _write_to_format_str(file, f">{'f' * len(radii)}", radii)
 
 def _write_control_sequence(file: BinaryIO, sequence: str):
     file.write(sequence.encode("utf-8"))
