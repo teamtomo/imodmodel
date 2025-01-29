@@ -90,7 +90,7 @@ def _write_chunk_size(file: BinaryIO, size: int):
     file.write(size.to_bytes(4, byteorder="big"))
 
 
-def _write_pointsize(file: BinaryIO, psizes: PointSize):
+def _write_point_sizes(file: BinaryIO, point_sizes: np.ndarray):
     radii = psizes.radii.flatten()
     _write_control_sequence(file, "SIZE")
     _write_chunk_size(file, 4 *  len(radii))
