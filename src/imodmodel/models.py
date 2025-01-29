@@ -31,7 +31,7 @@ class ModelHeader(BaseModel):
     xmax: int = 0
     ymax: int = 0
     zmax: int = 0
-    objsize: int = 0  
+    objsize: int = 0
     flags: int = 402653704
     drawmode: int = 1
     mousemode: int = 2
