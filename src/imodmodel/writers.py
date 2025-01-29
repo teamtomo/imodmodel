@@ -105,7 +105,7 @@ def _write_contour(file: BinaryIO, contour: Contour):
     points = contour.points.flatten()
     _write_to_format_str(file, f">{'f' * len(points)}", points)
 
-    if isinstance(contour.point_sizes, np.ndarray):
+    if not (contour.point_sizes is None):
         _write_point_sizes(file, contour.point_sizes)
     if contour.extra:
         _write_general_storage(file, contour.extra)
