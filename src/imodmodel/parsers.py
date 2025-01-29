@@ -150,7 +150,7 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
         storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
     return storages
 
-def _parse_pointsize(file: BinaryIO, psize : int) -> PointSize:
+def _parse_point_sizes(file: BinaryIO, psize : int) -> PointSize:
     _parse_chunk_size(file)
     radii = _parse_from_format_str(file, f">{'f' * psize}")
     radii = np.array(radii).reshape(-1)
