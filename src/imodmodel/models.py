@@ -104,7 +104,7 @@ class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader
     points: np.ndarray  # pt
-    psizes: Optional[PointSize] = None
+    point_sizes: Optional[np.ndarray]  = None
     extra: List[GeneralStorage] = []
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
