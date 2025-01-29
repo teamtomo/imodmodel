@@ -150,11 +150,10 @@ def _parse_general_storage(file: BinaryIO) -> List[GeneralStorage]:
         storages.append(GeneralStorage(type=type, flags=flags, index=index, value=value))
     return storages
 
-def _parse_point_sizes(file: BinaryIO, psize : int) -> PointSize:
+def _parse_point_sizes(file: BinaryIO, psize : int) -> np.ndarray:
     _parse_chunk_size(file)
-    radii = _parse_from_format_str(file, f">{'f' * psize}")
-    radii = np.array(radii).reshape(-1)
-    return PointSize(radii=radii)
+    point_sizes = _parse_from_format_str(file, f">{'f' * psize}")
+    return np.array(point_sizes).reshape(-1)
 
 def _parse_slicer_angle(file: BinaryIO) -> SLAN:
     _parse_chunk_size(file)
@@ -198,7 +197,7 @@ def parse_model(file: BinaryIO) -> ImodModel:
             minx = _parse_minx(file)
         elif control_sequence == "SIZE":
             psize = objects[-1].contours[-1].header.psize
-            objects[-1].contours[-1].psizes =_parse_pointsize(file,psize)
+            objects[-1].contours[-1].point_sizes =_parse_point_sizes(file,psize)
         else:
             _parse_unknown(file)
         control_sequence = _parse_control_sequence(file)
