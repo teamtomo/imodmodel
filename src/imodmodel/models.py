@@ -99,6 +99,7 @@ class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader
     points: np.ndarray  # pt
+    point_sizes: Optional[np.ndarray]  = None
     extra: List[GeneralStorage] = []
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -196,12 +197,6 @@ class MINX(BaseModel):
     cscale: Tuple[float, float, float]
     ctrans: Tuple[float, float, float]
     crot: Tuple[float, float, float]
-
-
-class Size(BaseModel):
-    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    sizes: float
-
 
 class View(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""

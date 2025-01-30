@@ -89,6 +89,12 @@ def _write_chunk_size(file: BinaryIO, size: int):
     file.write(size.to_bytes(4, byteorder="big"))
 
 
+def _write_point_sizes(file: BinaryIO, point_sizes: np.ndarray):
+    point_sizes = point_sizes.flatten()
+    _write_control_sequence(file, "SIZE")
+    _write_chunk_size(file, 4 *  len(point_sizes))
+    _write_to_format_str(file, f">{'f' * len(point_sizes)}", point_sizes)
+
 def _write_control_sequence(file: BinaryIO, sequence: str):
     file.write(sequence.encode("utf-8"))
 
@@ -97,6 +103,9 @@ def _write_contour(file: BinaryIO, contour: Contour):
     _write_contour_header(file, contour.header)
     points = contour.points.flatten()
     _write_to_format_str(file, f">{'f' * len(points)}", points)
+
+    if contour.point_sizes is not None:
+        _write_point_sizes(file, contour.point_sizes)
     if contour.extra:
         _write_general_storage(file, contour.extra)
 

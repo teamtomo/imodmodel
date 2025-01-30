@@ -52,3 +52,13 @@ def multiple_objects_model_file() -> Path:
 def multiple_objects_model_file_handle(slicer_angle_model_file):
     """A file handle with multiple object data."""
     return open(slicer_angle_model_file, mode='rb')
+
+@pytest.fixture
+def point_sizes_model_file() -> Path:
+    """A model file containing multiple object data."""
+    return TEST_DATA_DIRECTORY / 'point_sizes_example.mod'
+
+@pytest.fixture
+def point_sizes_model_file_handle(point_sizes_model_file):
+    """A file handle with multiple object data."""
+    return open(point_sizes_model_file, mode='rb')
