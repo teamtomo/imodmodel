@@ -11,7 +11,6 @@ from .models import (
     Contour,
     ContourHeader,
     GeneralStorage,
-    PointSize,
     Mesh,
     MeshHeader,
     MINX,

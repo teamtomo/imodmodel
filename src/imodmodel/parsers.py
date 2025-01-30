@@ -10,7 +10,6 @@ from .models import (
     SLAN,
     Contour,
     ContourHeader,
-    PointSize,
     GeneralStorage,
     Mesh,
     MeshHeader,

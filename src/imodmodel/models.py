@@ -19,11 +19,6 @@ class GeneralStorage(BaseModel):
     index: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
     value: Union[float, int, Tuple[int, int], Tuple[int, int, int, int]]
 
-class PointSize(BaseModel):
-    """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    radii: np.ndarray
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
 
 class ModelHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
