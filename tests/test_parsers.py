@@ -16,6 +16,7 @@ from imodmodel.parsers import (
     _parse_chunk_size,
     _parse_from_type_flags,
     _parse_general_storage,
+    _parse_point_sizes,
     parse_model,
 )
 
@@ -274,6 +275,18 @@ def test_parse_curvature(meshed_curvature_model_file_handle):
         assert isinstance(store.index, int)
         assert isinstance(store.value, float)
 
+@pytest.mark.parametrize(
+    'position, psize, expected_point_sizes',
+    [
+        (492, 4, np.array([28.39998245, 33.99998474, 18.79999161, 22.79998779]))
+    ]
+)
+def test_parse_point_sizes(point_sizes_model_file_handle, position: int, psize: int, expected_point_sizes: np.ndarray):
+    """Check that point sizes are correctly parsed."""
+    point_sizes_model_file_handle.seek(position)
+    point_sizes = _parse_point_sizes(point_sizes_model_file_handle, psize)
+    assert np.allclose(point_sizes, expected_point_sizes)
+    point_sizes_model_file_handle.close()
 
 def test_parse_model(two_contour_model_file_handle):
     """Check that model file is parsed correctly."""
