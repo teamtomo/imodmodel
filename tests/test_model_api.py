@@ -78,18 +78,18 @@ def test_read_minx(meshed_contour_model_file):
     assert model.minx.ctrans == pytest.approx((-2228.0, 2228.0, 681.099976), abs=1e-6)
     assert model.minx.crot == pytest.approx((0.0, 0.0, 0.0), abs=1e-6)
 
-@pytest.mark.parametrize(
-    "file_fixture_point_sizes, object_with_point_sizes, object_without_point_sizes", 
-    [
-        ('point_sizes_model_file', 0, 1),
-    ]
-)
-def test_point_sizes(file_fixture_point_sizes, object_with_point_sizes, object_without_point_sizes, request):
+def test_point_sizes(file_fixture_point_sizes):
     file = request.getfixturevalue(file_fixture_point_sizes)
     model = ImodModel.from_file(file)
     assert isinstance(model, ImodModel)
-    assert isinstance(model.objects[object_with_point_sizes].contours[0].point_sizes, np.ndarray)
-    assert model.objects[object_without_point_sizes].contours[0].point_sizes is None
+    
+    # check point sizes are on contour in object with point sizes
+    object_with_point_sizes = model.objects[0]
+    assert isinstance(object_with_point_sizes.contours[0].point_sizes, np.ndarray)
+    
+    # check point sizes aren't on contour in object without point sizes
+    object_without_point_sizes = model.objects[1]
+    assert object_without_point_sizes.contours[0].point_sizes is None
 
 
 def test_read_write_read_roundtrip(two_contour_model_file, tmp_path):
