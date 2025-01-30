@@ -78,9 +78,8 @@ def test_read_minx(meshed_contour_model_file):
     assert model.minx.ctrans == pytest.approx((-2228.0, 2228.0, 681.099976), abs=1e-6)
     assert model.minx.crot == pytest.approx((0.0, 0.0, 0.0), abs=1e-6)
 
-def test_point_sizes(file_fixture_point_sizes):
-    file = request.getfixturevalue(file_fixture_point_sizes)
-    model = ImodModel.from_file(file)
+def test_point_sizes(point_sizes_model_file):
+    model = ImodModel.from_file(point_sizes_model_file)
     assert isinstance(model, ImodModel)
     
     # check point sizes are on contour in object with point sizes
