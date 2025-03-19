@@ -1,4 +1,3 @@
-
 from struct import Struct
 from typing import BinaryIO, List, Union
 
@@ -31,14 +30,25 @@ def _write_to_format_str(file: BinaryIO, format_str: str, data: Union[tuple, lis
 
 
 def _write_to_specification(file: BinaryIO, specification: dict, data: dict):
-    format_str = f">{''.join(specification.values())}"
+    format_parts = []
     data_1d = []
-    for key, value in specification.items():
-        if value[0].isdigit() and value[-1] in "iIlLqQfd":
-            data_1d.extend(data[key])
+    
+    for key, fmt in specification.items():
+        if fmt[-1] == 'c':
+            count = int(''.join(filter(str.isdigit, fmt)))
+            str_data = data[key].encode('utf-8') if isinstance(data[key], str) else data[key]
+            str_data = str_data[:count] + b'\x00' * (count - len(str_data))
+            data_1d.append(str_data)
+            format_parts.append(f'{count}s')
         else:
-            data_1d.append(data[key])
-    _write_to_format_str(file, format_str, data_1d)
+            if fmt[0].isdigit() and fmt[-1] in "iIlLqQfd":
+                count = int(''.join(filter(str.isdigit, fmt)))
+                data_1d.extend(data[key][:count])
+            else:
+                data_1d.append(data[key])
+            format_parts.append(fmt)
+    
+    _write_to_format_str(file, f">{''.join(format_parts)}", data_1d)
 
 
 def _write_id(file: BinaryIO, id: ID):
