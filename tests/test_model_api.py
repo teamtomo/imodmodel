@@ -104,3 +104,13 @@ def test_read_write_read_roundtrip(two_contour_model_file, tmp_path):
     assert np.allclose(model.objects[0].contours[0].points, model2.objects[0].contours[0].points)
     assert model.objects[0].contours[1].header == model2.objects[0].contours[1].header
     assert np.allclose(model.objects[0].contours[1].points, model2.objects[0].contours[1].points)
+
+def test_read_write_read_roundtrip_slicer_angles(slicer_angle_model_file, tmp_path):
+    """Check that reading and writing a model file results in the same data."""
+    import numpy as np
+
+    model = ImodModel.from_file(slicer_angle_model_file)
+    model.to_file(tmp_path / "test_model.imod")
+    model2 = ImodModel.from_file(tmp_path / "test_model.imod")
+    assert model.header == model2.header
+    assert model.slicer_angles == model2.slicer_angles
