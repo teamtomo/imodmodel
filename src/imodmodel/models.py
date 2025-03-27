@@ -230,7 +230,7 @@ class SLAN(BaseModel):
     time: int
     angles: Tuple[float,float,float]
     center: Tuple[float,float,float]
-    label: str
+    label: bytes
 
 
 class Object(BaseModel):

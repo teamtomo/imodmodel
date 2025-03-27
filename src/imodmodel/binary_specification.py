@@ -107,7 +107,7 @@ class ModFileSpecification:
         'time': 'i',
         'angles': '3f',
         'center': '3f',
-        'label': '32c'
+        'label': '32s'
     }
     MINX = {
         'oscale': '3f',

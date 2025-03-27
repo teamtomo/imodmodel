@@ -205,28 +205,28 @@ def test_parse_imat(two_contour_model_file_handle):
             1,
             np.array([13.100000, 0.0, -30.200001]),
             np.array([235.519577, 682.744141, 302.0]),
-            '\x00'
+            b"\x00\xff\xff\xff\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x000\x9e\xb8\xe9\xfe\x7f\x00\x00\xd8\xca'\x06"
         ),
         (
             1115,
             1,
             np.array([-41.400002, 0.0, -47.700001]),
             np.array([221.942444, 661.193237, 327.0]),
-            '\x00'
+            b'\x00\x00\x00\x000\x9e\xb8\xe9\xfe\x7f\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x12\x00\x00\x00\x00\x00\x00\x00\xad\n\x16\x06'
         ),
         (
             1183,
             1,
             np.array([-41.400002, 0.0, -41.799999]),
             np.array([232.790726, 671.332031, 327.0]),
-            '\x00'
+            b'\x00\x00\x00\x000\x9e\xb8\xe9\xfe\x7f\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x12\x00\x00\x00\x00\x00\x00\x00\xad\n\x16\x06'
         ),
         (
             1251,
             1,
             np.array([-35.500000, 0.0, -36.000000]),
             np.array([240.129181, 679.927795, 324.0]),
-            '\x00'
+            b'\x00\x00\x00\x000\x9e\xb8\xe9\xfe\x7f\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x12\x00\x00\x00\x00\x00\x00\x00\xad\n\x16\x06'
         )
     ]
 )
@@ -236,7 +236,7 @@ def test_parse_slicer_angles(
     expected_time: int,
     expected_angles: np.ndarray,
     expected_center: np.ndarray,
-    expected_label: str,
+    expected_label: bytes,
 ):
     slicer_angle_model_file_handle.seek(position)
     slicer_angle = _parse_slicer_angle(slicer_angle_model_file_handle)
