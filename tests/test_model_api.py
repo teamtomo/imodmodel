@@ -50,9 +50,8 @@ def test_read_slicer_angle(file_fixture_slicer_angle, request):
     assert len(model.slicer_angles) == 4
     assert isinstance(model.slicer_angles, list)
     assert isinstance(model.slicer_angles[0], SLAN)
-    # Check that the label is bytes
-    assert isinstance(model.slicer_angles[0].label, bytes)
-    assert len(model.slicer_angles[0].label) == 32
+    # Check that the label is string
+    assert isinstance(model.slicer_angles[0].label, str)
 
 @pytest.mark.parametrize(
     "file_fixture_multiple_objects, objects_expected", 
