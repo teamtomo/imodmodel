@@ -236,7 +236,7 @@ def test_parse_slicer_angles(
     expected_time: int,
     expected_angles: np.ndarray,
     expected_center: np.ndarray,
-    expected_label: bytes,
+    expected_label: str,
 ):
     slicer_angle_model_file_handle.seek(position)
     slicer_angle = _parse_slicer_angle(slicer_angle_model_file_handle)
