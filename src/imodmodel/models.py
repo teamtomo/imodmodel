@@ -50,12 +50,6 @@ class ModelHeader(BaseModel):
     beta: float = 0.0
     gamma: float = 0.0
 
-    @field_validator('name', mode="before")
-    @classmethod
-    def decode_null_terminated_byte_string(cls, value: bytes):
-        end = value.find(b'\x00')
-        return value[:end].decode('utf-8')
-
 
 class ObjectHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""

@@ -50,6 +50,8 @@ def test_read_slicer_angle(file_fixture_slicer_angle, request):
     assert len(model.slicer_angles) == 4
     assert isinstance(model.slicer_angles, list)
     assert isinstance(model.slicer_angles[0], SLAN)
+    # Check that the label is string
+    assert isinstance(model.slicer_angles[0].label, str)
 
 @pytest.mark.parametrize(
     "file_fixture_multiple_objects, objects_expected", 
@@ -104,3 +106,11 @@ def test_read_write_read_roundtrip(two_contour_model_file, tmp_path):
     assert np.allclose(model.objects[0].contours[0].points, model2.objects[0].contours[0].points)
     assert model.objects[0].contours[1].header == model2.objects[0].contours[1].header
     assert np.allclose(model.objects[0].contours[1].points, model2.objects[0].contours[1].points)
+
+
+def test_read_write_read_roundtrip_slicer_angles(slicer_angle_model_file, tmp_path):
+    """Check that reading and writing a model file results in the same data."""
+    model = ImodModel.from_file(slicer_angle_model_file)
+    model.to_file(tmp_path / "test_model.imod")
+    model2 = ImodModel.from_file(tmp_path / "test_model.imod")
+    assert model.slicer_angles[0].label == model2.slicer_angles[0].label

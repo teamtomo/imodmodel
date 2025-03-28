@@ -34,6 +34,9 @@ def _parse_from_specification(
             n = int(re.match(r"\d+", value).group(0))  # type: ignore
             data[key] = data_1d[i:i+n]
             i += n - 1
+        elif value[-1] == "s":  
+            # Truncate everything after the first zero byte
+            data[key] = data_1d[i].split(b"\x00")[0]
         else:
             data[key] = data_1d[i]
         i += 1
