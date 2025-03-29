@@ -60,6 +60,60 @@ array([0., 0., 35.22094345, ...])
 
 That's it!
 
+### Create and save model files
+
+```python
+model = ImodModel(
+    objects=[
+        Object(
+            color=(0.0,1.0,0.0),
+            header = ObjectHeader(
+                flags=ObjectFlags(
+                    scattered=True
+                    )
+                ),
+            contours = [
+                Contour(
+                    points=np.array([
+                            [4.5,8.0,0.0],
+                            [9.0,8.0,0.0]
+                           ])
+                    
+                )
+            ]
+        ),
+        Object(
+            color=(0.0,0.0,1.0),
+            header=ObjectHeader(
+                pdrawsize=0
+            ),
+            contours=[
+                Contour(
+                    points = np.column_stack((6.75 + 6.75 * np.cos(np.linspace(0, 2 * np.pi, 200, endpoint=False)), 6.75 + 6.75 * np.sin(np.linspace(0, 2 * np.pi, 200, endpoint=False)), np.zeros(200)))
+                )
+            ]
+        ),
+        Object(
+            color=(1.0,0.0,0.0),
+            header=ObjectHeader(
+                pdrawsize=0,
+                flags=ObjectFlags(
+                    open=True
+                    )
+            ),
+            
+            contours=[
+                Contour(
+                    points = np.column_stack((6.75 + 4.75 * np.cos(np.linspace(1 * np.pi, 2 * np.pi, 100, endpoint=False)), 6.75 + 4.75 * np.sin(np.linspace( 1 * np.pi, 2 * np.pi, 100, endpoint=False)), np.zeros(100)))
+                )
+            ]
+        )
+    ]
+)
+
+model.to_file("smiley.mod")
+```
+
 ## Installation
 `imodmodel` can be installed from the [Python Package Index](https://pypi.org/) (PyPI)
 

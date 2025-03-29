@@ -114,3 +114,112 @@ def test_read_write_read_roundtrip_slicer_angles(slicer_angle_model_file, tmp_pa
     model.to_file(tmp_path / "test_model.imod")
     model2 = ImodModel.from_file(tmp_path / "test_model.imod")
     assert model.slicer_angles[0].label == model2.slicer_angles[0].label
+
+    
+def test_color_syntactic_sugar(two_contour_model_file):
+    """Check that the color property of the model object is a tuple."""
+    model = ImodModel.from_file(two_contour_model_file)
+    assert model.objects[0].color == (0.0, 1.0, 0.0)
+
+    random_color = tuple(np.random.rand(3))  # Generate a random color tuple
+    model.objects[0].color = random_color
+    # Check if the color has been updated
+    assert model.objects[0].header.red == random_color[0]
+    assert model.objects[0].header.green == random_color[1]
+    assert model.objects[0].header.blue == random_color[2]
+
+    test_object = Object(color=random_color)
+    assert test_object.header.red == random_color[0]
+    assert test_object.header.green == random_color[1]
+    assert test_object.header.blue == random_color[2]
+
+    # Test that directly changing header set color tuple
+    test_object.header.red = 0.5
+    test_object.header.green = 0.2
+    test_object.header.blue = 0.8
+    assert test_object.color == (0.5, 0.2, 0.8)
+
+def test_object_creation_and_write(tmp_path):
+    
+    test_model = ImodModel(
+        objects = [
+            Object(
+            contours = [
+                Contour(
+                    points = np.random.rand(23, 3),  # Random points for the contour
+                ) for _ in range(25)
+            ]) for _ in range(30)
+        ]
+    )
+
+    test_model.to_file(tmp_path / "test_model_many_contours.imod")
+    
+    # Now read the model back to check if it was written correctly
+    model_read_back = ImodModel.from_file(tmp_path / "test_model_many_contours.imod")
+    assert isinstance(model_read_back, ImodModel)
+    assert len(model_read_back.objects) == 30
+    assert len(model_read_back.objects[0].contours) == 25  
+    assert model_read_back.objects[0].contours[0].points.shape == (23, 3) 
+
+def test_model_flags(two_contour_model_file,tmp_path):
+    """Check the model flags property."""
+    model = ImodModel.from_file(two_contour_model_file)
+    
+    # Check the initial flags
+    assert model.header.flags.flag0 is False
+    assert model.header.flags.current_tilt_angles_are_stored_correctly is True
+    assert int(model.header.flags) == 62464
+
+    model.header.flags.flag0 = True
+    assert int(model.header.flags) == 62465
+    model.header.flags.current_tilt_angles_are_stored_correctly = False
+    assert int(model.header.flags) == 29697
+
+    model.to_file(tmp_path / "test_model_with_flags.imod")
+    # Read back the model to check if flags were set correctly
+    read_back_model = ImodModel.from_file(tmp_path / "test_model_with_flags.imod")
+    assert read_back_model.header.flags.flag0 is True
+    assert read_back_model.header.flags.current_tilt_angles_are_stored_correctly is False
+
+
+def test_object_flags(two_contour_model_file,tmp_path):
+    model = ImodModel.from_file(two_contour_model_file)
+    initial_object = model.objects[0]
+    
+    # Check the initial flags
+    assert initial_object.header.flags.flag0 is False
+    assert initial_object.header.flags.draw_label is True
+    assert int(initial_object.header.flags) == 402653184
+
+    initial_object.header.flags.flag0 = True
+    assert int(initial_object.header.flags) == 402653185
+    initial_object.header.flags.draw_label = False
+
+    model.to_file(tmp_path / "test_object_flags.mode")
+    read_back_model = ImodModel.from_file(tmp_path / "test_object_flags.mode")
+    read_back_object = read_back_model.objects[0]
+    assert read_back_object.header.flags.flag0 == True
+    assert read_back_object.header.flags.draw_label == False
+
+
+def test_contour_flags(two_contour_model_file, tmp_path):
+    """Check the contour flags property."""
+    model = ImodModel.from_file(two_contour_model_file)
+    initial_contour = model.objects[0].contours[0]
+
+    # Check the initial flags
+    assert initial_contour.header.flags.flag0 is False
+    assert int(initial_contour.header.flags) == 0
+
+    # Modify the flags
+    initial_contour.header.flags.flag0 = True
+    assert int(initial_contour.header.flags) == 1
+
+    # Write the model to a file and read it back
+    model.to_file(tmp_path / "test_contour_flags.imod")
+    read_back_model = ImodModel.from_file(tmp_path / "test_contour_flags.imod")
+    read_back_contour = read_back_model.objects[0].contours[0]
+
+    # Verify the flags after reading back
+    assert read_back_contour.header.flags.flag0 is True
+    assert int(read_back_contour.header.flags) == 1

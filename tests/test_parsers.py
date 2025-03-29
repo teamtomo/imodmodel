@@ -62,7 +62,9 @@ def test_parse_model_header(two_contour_model_file_handle):
         'zoffset': 0.0,
         'zscale': 1.0
     }
-    assert object_header.dict() == expected
+    result = dict(object_header)
+    result['flags'] = int(result['flags'])
+    assert result == expected
     two_contour_model_file_handle.close()
 
 
@@ -112,7 +114,9 @@ def test_parse_object_header(two_contour_model_file_handle):
         'symsize': 3,
         'trans': 0
     }
-    assert object_header.dict() == expected
+    result = dict(object_header)
+    result["flags"] = int(result["flags"])
+    assert result == expected
 
 
 @pytest.mark.parametrize(
@@ -162,7 +166,9 @@ def test_parse_contour(
     """Check that contours are correctly parsed."""
     two_contour_model_file_handle.seek(position)
     contour = _parse_contour(two_contour_model_file_handle)
-    assert contour.dict()['header'] == expected_header
+    header = dict(contour.header)
+    header["flags"] = int(header["flags"])
+    assert header == expected_header
     assert np.allclose(contour.points, expected_points)
     two_contour_model_file_handle.close()
 
