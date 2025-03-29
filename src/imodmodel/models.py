@@ -123,11 +123,10 @@ class MeshFlags(IntFlagModel):
     flag17: bool = False
     flag18: bool = False
     flag19: bool = False
-    resultion1: bool = False
-    resultion2: bool = False
-    resultion3: bool = False
-    resultion4: bool = False
-
+    resolution1: bool = False
+    resolution2: bool = False
+    resolution3: bool = False
+    resolution4: bool = False
 class MeshHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     vsize: int = 0
