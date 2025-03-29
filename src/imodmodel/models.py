@@ -207,8 +207,7 @@ class Mesh(BaseModel):
     @indices.setter
     def indices(self, value: np.ndarray):
         if value.ndim != 2 or value.shape[1] != 3:
-            raise ValueError('vertices must be 2D with shape (n, 3)')
-   
+            raise ValueError('indices must be 2D with shape (n, 3)')
         self.raw_indices = np.concatenate([
             np.array([-25]),
             value.flatten() * 2,
