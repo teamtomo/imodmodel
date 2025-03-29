@@ -27,8 +27,7 @@ dynamic = ["version"]
 dependencies = [
     "numpy",
     "pandas",
-    "pydantic>=2",
-    "numpydantic"
+    "pydantic>=2"
 ]
 
 # extras

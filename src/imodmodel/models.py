@@ -4,7 +4,6 @@ from typing import List, Optional, Tuple, Union
 
 import numpy as np
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
-from numpydantic import NDArray, Shape
 
 class ID(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
@@ -90,13 +89,24 @@ class ContourHeader(BaseModel):
 class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader = ContourHeader()
-    points: NDArray[Shape['*,3'],np.float64]
+    points: np.ndarray 
     point_sizes: Optional[np.ndarray]  = None
     extra: List[GeneralStorage] = []
 
     model_config = ConfigDict(arbitrary_types_allowed=True,
                               validate_assignment=True)
-        
+    
+    @field_validator('points')
+    @classmethod
+    def validate_points(cls, points: Union[np.ndarray, List[List[float]]]):
+        if not isinstance(points, np.ndarray):
+            points = np.array(points)
+        if points.ndim != 2:
+            raise ValueError('points must be 2D')
+        if points.shape[1] != 3:
+            raise ValueError(f'Invalid points shape: {points.shape}')
+        return points
+
     @model_validator(mode='after')
     def update_sizes(self):
         self.header.psize = len(self.points)
