@@ -28,6 +28,7 @@ dependencies = [
     "numpy",
     "pandas",
     "pydantic>=2",
+    "numpydantic"
 ]
 
 # extras
