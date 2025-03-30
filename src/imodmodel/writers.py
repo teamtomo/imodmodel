@@ -61,7 +61,7 @@ def _write_contour_header(file: BinaryIO, header: ContourHeader):
 
 
 def _write_mesh_header(file: BinaryIO, header: MeshHeader):
-    _write_to_specification(file, ModFileSpecification.MESH_HEADER, header.dict())
+    _write_to_specification(file, ModFileSpecification.MESH_HEADER, dict(header))
 
 
 def _write_imat(file: BinaryIO, imat: IMAT):

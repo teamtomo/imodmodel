@@ -27,7 +27,7 @@ dynamic = ["version"]
 dependencies = [
     "numpy",
     "pandas",
-    "pydantic>=2",
+    "pydantic>=2"
 ]
 
 # extras
@@ -45,6 +45,7 @@ dev = [
     "rich",
     "ruff",
     "mkdocs-material",
+    "mkdocs-jupyter",
 ]
 
 [project.urls]

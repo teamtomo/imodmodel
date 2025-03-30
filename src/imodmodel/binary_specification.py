@@ -64,7 +64,7 @@ class ModFileSpecification:
     MESH_HEADER = {
         'vsize': 'i',
         'lsize': 'i',
-        'flag': 'I',
+        'flags': 'I',
         'time': 'h',
         'surf': 'h',
     }

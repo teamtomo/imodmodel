@@ -5,7 +5,6 @@ from typing import List, Optional, Tuple, Union
 import numpy as np
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
-
 class ID(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     IMOD_file_id: str
@@ -90,36 +89,87 @@ class ContourHeader(BaseModel):
 class Contour(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
     header: ContourHeader = ContourHeader()
-    points: np.ndarray  # pt
+    points: np.ndarray 
     point_sizes: Optional[np.ndarray]  = None
     extra: List[GeneralStorage] = []
 
     model_config = ConfigDict(arbitrary_types_allowed=True,
                               validate_assignment=True)
-        
+    
+    @field_validator('points')
+    @classmethod
+    def validate_points(cls, points: Union[np.ndarray, List[List[float]]]):
+        if not isinstance(points, np.ndarray):
+            points = np.array(points)
+        if points.ndim != 2:
+            raise ValueError('points must be 2D')
+        if points.shape[1] != 3:
+            raise ValueError(f'Invalid points shape: {points.shape}')
+        return points
+
     @model_validator(mode='after')
     def update_sizes(self):
         self.header.psize = len(self.points)
         return(self)
 
-
+class MeshFlags(IntFlagModel):
+    flag0: bool = False
+    flag1: bool = False
+    flag2: bool = False
+    flag3: bool = False
+    flag4: bool = False
+    flag5: bool = False
+    flag6: bool = False
+    flag7: bool = False
+    flag8: bool = False
+    flag9: bool = False
+    flag10: bool = False
+    flag11: bool = False
+    flag12: bool = False
+    flag13: bool = False
+    flag14: bool = False
+    flag15: bool = False
+    normals_have_magnitude: bool = False
+    flag17: bool = False
+    flag18: bool = False
+    flag19: bool = False
+    resolution1: bool = False
+    resolution2: bool = False
+    resolution3: bool = False
+    resolution4: bool = False
 class MeshHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    vsize: int
-    lsize: int
-    flag: int
-    time: int
-    surf: int
+    vsize: int = 0
+    lsize: int = 0
+    flags: MeshFlags = MeshFlags(0)
+    time: int = 0
+    surf: int = 0
+
+    @field_validator('flags', mode="before")
+    @classmethod
+    def set_flags(cls, value: Union[int,MeshFlags]):
+        if isinstance(value,int):
+            flags = MeshFlags(value)
+        else:
+            flags = value        
+        return flags
 
 class Mesh(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
-    header: MeshHeader
-    raw_vertices: np.ndarray
-    raw_indices: np.ndarray
+    header: MeshHeader = MeshHeader()
+    raw_vertices: np.ndarray = np.zeros((0,))
+    raw_indices: np.ndarray = np.zeros((0,))
     extra: List[GeneralStorage] = []
 
-    model_config = ConfigDict(arbitrary_types_allowed=True)
+    model_config = ConfigDict(arbitrary_types_allowed=True,
+                              validate_assignment=True)
 
+    @model_validator(mode='after')
+    def update_sizes(self):
+        self.header.vsize = len(self.raw_vertices) // 3
+        self.header.lsize = len(self.raw_indices) 
+        return(self)
+    
     @field_validator('raw_indices')
     @classmethod
     def validate_indices(cls, indices: np.ndarray):
@@ -145,11 +195,35 @@ class Mesh(BaseModel):
 
     @property
     def vertices(self) -> np.ndarray:
-        return self.raw_vertices.reshape((-1, 3))
+        return self.raw_vertices.reshape((-1, 3))[::2]
+    
+    @vertices.setter
+    def vertices(self, value: np.ndarray):
+        if value.ndim != 2 or value.shape[1] != 3:
+            raise ValueError('vertices must be 2D with shape (n, 3)')
+
+        raw_vertices = np.zeros((value.shape[0] * 2, value.shape[1]))
+        raw_vertices[::2] = value
+        self.raw_vertices = raw_vertices.flatten()
+    
+    @property
+    def normals(self) -> np.ndarray:
+        return self.raw_vertices.reshape((-1, 3))[1::2]
 
     @property
     def indices(self) -> np.ndarray:
-        return self.raw_indices[np.where(self.raw_indices >= 0)].reshape((-1, 3))
+        return self.raw_indices[np.where(self.raw_indices >= 0)].reshape((-1, 3))//2
+
+    @indices.setter
+    def indices(self, value: np.ndarray):
+        if value.ndim != 2 or value.shape[1] != 3:
+            raise ValueError('indices must be 2D with shape (n, 3)')
+        self.raw_indices = np.concatenate([
+            np.array([-25]),
+            value.flatten() * 2,
+            np.array([-22]),
+            np.array([-1]),
+        ], dtype=np.int32)
 
     @property
     def face_values(self) -> Optional[np.ndarray]:
