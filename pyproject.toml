@@ -45,6 +45,7 @@ dev = [
     "rich",
     "ruff",
     "mkdocs-material",
+    "mkdocs-jupyter",
 ]
 
 [project.urls]
