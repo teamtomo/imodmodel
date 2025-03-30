@@ -2,6 +2,18 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://teamtomo.org/imodmodel/</loc>
-         <lastmod>2025-03-29</lastmod>
+         <lastmod>2025-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://teamtomo.org/imodmodel/examples/export_mesh/</loc>
+         <lastmod>2025-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://teamtomo.org/imodmodel/examples/read_mesh/</loc>
+         <lastmod>2025-03-30</lastmod>
+    </url>
+    <url>
+         <loc>https://teamtomo.org/imodmodel/examples/smiley/</loc>
+         <lastmod>2025-03-30</lastmod>
     </url>
 </urlset>
