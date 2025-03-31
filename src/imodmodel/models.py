@@ -1,8 +1,10 @@
+from enum import Enum
 import os
 import warnings
 from typing import List, Optional, Tuple, Union
 
 import numpy as np
+import pandas as pd
 from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 class ID(BaseModel):
@@ -68,6 +70,12 @@ class ContourFlags(IntFlagModel):
     connect_bottom: bool = False
     connect_invert: bool = False
     
+
+class ContourType(Enum):
+    OPEN = "open"
+    CLOSED = "closed"
+    SCATTERED = "scattered"
+
 
 class ContourHeader(BaseModel):
     """https://bio3d.colorado.edu/imod/doc/binspec.html"""
@@ -486,7 +494,43 @@ class ImodModel(BaseModel):
         from .parsers import parse_model
         with open(filename, 'rb') as file:
             return parse_model(file)
-    
+        
+    @classmethod
+    def from_dataframe(cls, dataframe: pd.DataFrame, type: ContourType = ContourType.SCATTERED):
+        """Read an IMOD model from a pandas DataFrame."""
+        
+        # Ensure the DataFrame has the required columns
+        required_columns = ['x', 'y', 'z']
+        for col in required_columns:
+            if col not in dataframe.columns:
+                raise ValueError(f"DataFrame must contain the column '{col}'")
+        if "object_id" not in dataframe.columns:
+            dataframe["object_id"] = 0
+        if "contour_id" not in dataframe.columns:
+            dataframe["contour_id"] = 0
+  
+        model = ImodModel()
+        for object_id, object_group in dataframe.groupby("object_id"):
+            obj = Object()
+            for contour_id, contour_group in object_group.groupby("contour_id"):
+                contour = Contour(
+                    points=contour_group[['x', 'y', 'z']].values,
+                )
+                obj.contours.append(contour)
+            if type == ContourType.SCATTERED:
+                obj.header.flags.scattered = True
+                obj.header.flags.open = False
+            elif type == ContourType.OPEN:
+                obj.header.flags.scattered = False
+                obj.header.flags.open = True
+            elif type == ContourType.CLOSED:
+                obj.header.flags.scattered = False
+                obj.header.flags.open = False
+            obj.update_sizes()
+            model.objects.append(obj)
+        model.update_sizes()
+        return model
+
     def to_file(self, filename: os.PathLike):
         """Write an IMOD model to disk."""
         from .writers import write_model

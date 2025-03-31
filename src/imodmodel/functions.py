@@ -14,3 +14,14 @@ def read(filename: os.PathLike, annotation: str = 'contour') -> pd.DataFrame:
     """
     model = ImodModel.from_file(filename)
     return model_to_dataframe(model,annotation)
+
+def write(dataframe: pd.DataFrame, filename: os.PathLike) -> None:
+    """Write a pandas DataFrame to an IMOD model file.
+
+    Parameters
+    ----------
+    dataframe : pandas DataFrame to write
+    filename : filename to write
+    """
+    model = ImodModel.from_dataframe(dataframe)
+    model.to_file(filename)
