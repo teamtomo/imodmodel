@@ -497,7 +497,7 @@ class ImodModel(BaseModel):
         
     @classmethod
     def from_dataframe(cls, dataframe: pd.DataFrame, type: ContourType = ContourType.SCATTERED):
-        """Read an IMOD model from a pandas DataFrame."""
+        """Construct an ImodModel instance from a pandas DataFrame."""
         
         # Ensure the DataFrame has the required columns
         required_columns = ['x', 'y', 'z']
