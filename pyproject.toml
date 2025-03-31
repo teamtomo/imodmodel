@@ -8,7 +8,7 @@ build-backend = "hatchling.build"
 name = "imodmodel"
 description = "IMOD model files as pandas DataFrames in Python."
 readme = "README.md"
-requires-python = ">=3.8"
+requires-python = ">=3.9"
 license = {text = "BSD 3-Clause License"}
 authors = [
   {email = "alisterburt@gmail.com"},
@@ -73,7 +73,7 @@ source = "vcs"
 # https://github.com/charliermarsh/ruff
 [tool.ruff]
 line-length = 88
-target-version = "py38"
+target-version = "py39"
 extend-select = [
     "E",    # style errors
     "F",    # flakes
