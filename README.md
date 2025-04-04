@@ -1,18 +1,18 @@
 # imodmodel
 
-[![License](https://img.shields.io/pypi/l/imodmodel.svg?color=green)](https://github.com/alisterburt/imodmodel/raw/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/imodmodel.svg?color=green)](https://github.com/teamtomo/imodmodel/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/imodmodel.svg?color=green)](https://pypi.org/project/imodmodel)
 [![Python Version](https://img.shields.io/pypi/pyversions/imodmodel.svg?color=green)](https://python.org)
-[![CI](https://github.com/alisterburt/imodmodel/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/alisterburt/imodmodel/actions/workflows/test_and_deploy.yml)
+[![CI](https://github.com/teamtomo/imodmodel/actions/workflows/test_and_deploy.yml/badge.svg)](https://github.com/teamtomo/imodmodel/actions/workflows/test_and_deploy.yml)
 
-Read [IMOD model files](https://bio3d.colorado.edu/imod/doc/binspec.html) 
+Read and write [IMOD model files](https://bio3d.colorado.edu/imod/doc/binspec.html) 
 as [pandas dataframes](https://pandas.pydata.org/) 
 in Python.
 
 
 ## Usage
 
-### As pandas DataFrame
+### Read IMOD models as pandas DataFrame
 
 ```python
 import imodmodel
@@ -32,87 +32,14 @@ Out[3]:
 
 
 ```
-
-### As ImodModel object
-
-```python
-from imodmodel import ImodModel
-model = ImodModel.from_file("my_model_file.mod")
-```
-
-```ipython
-In [3]: model.objects[0].contours[0].points
-Out[3]: 
-array([[  6.875,  62.875, 124.   ], ...])
-
-In [4]: model.objects[0].meshes[0].vertices
-Out[4]: 
-array([[ 6.87500000e+00,  6.28750000e+01,  1.24000000e+02], ...])
-
-In [5]: model.objects[0].meshes[0].indices
-Out[5]: 
-array([[156,  18, 152], ...])
-
-In [6]: model.objects[0].meshes[0].face_values
-Out[6]: 
-array([0., 0., 35.22094345, ...])
-```
-
-That's it!
-
-### Create and save model files
+### Write IMOD models from a pandas DataFrame
 
 ```python
-model = ImodModel(
-    objects=[
-        Object(
-            color=(0.0,1.0,0.0),
-            header = ObjectHeader(
-                flags=ObjectFlags(
-                    scattered=True
-                    )
-                ),
-            contours = [
-                Contour(
-                    points=np.array([
-                            [4.5,8.0,0.0],
-                            [9.0,8.0,0.0]
-                           ])
-                    
-                )
-            ]
-        ),
-        Object(
-            color=(0.0,0.0,1.0),
-            header=ObjectHeader(
-                pdrawsize=0
-            ),
-            contours=[
-                Contour(
-                    points = np.column_stack((6.75 + 6.75 * np.cos(np.linspace(0, 2 * np.pi, 200, endpoint=False)), 6.75 + 6.75 * np.sin(np.linspace(0, 2 * np.pi, 200, endpoint=False)), np.zeros(200)))
-                )
-            ]
-        ),
-        Object(
-            color=(1.0,0.0,0.0),
-            header=ObjectHeader(
-                pdrawsize=0,
-                flags=ObjectFlags(
-                    open=True
-                    )
-            ),
-            
-            contours=[
-                Contour(
-                    points = np.column_stack((6.75 + 4.75 * np.cos(np.linspace(1 * np.pi, 2 * np.pi, 100, endpoint=False)), 6.75 + 4.75 * np.sin(np.linspace( 1 * np.pi, 2 * np.pi, 100, endpoint=False)), np.zeros(100)))
-                )
-            ]
-        )
-    ]
-)
-
-model.to_file("smiley.mod")
+imodmodel.write(df, 'my_new_modelfile.mod')
 ```
+
+For more advanced use cases we also provide an object-based API.
+Please consult our [Documentation](https://teamtomo.org/imodmodel/).
 
 ## Installation
 `imodmodel` can be installed from the [Python Package Index](https://pypi.org/) (PyPI)

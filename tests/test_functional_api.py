@@ -34,3 +34,14 @@ def test_unknown_annotation(two_contour_model_file):
     """Check that an error is raised if an unknown annotation is requested."""
     with pytest.raises(ValueError, match="Unknown annotation type: unknown"):
         df = imodmodel.read(two_contour_model_file, annotation='unknown')
+
+def test_write(two_contour_model_file,tmp_path):
+    """Check that a model can be written to a file."""
+    # Read the original model
+    original_model = imodmodel.read(two_contour_model_file)
+    # Write the model to a new file
+    imodmodel.write(original_model, tmp_path / "test_model.imod")
+    # Read the new model
+    new_model = imodmodel.read(tmp_path / "test_model.imod")
+    # Check that the new model matches the original
+    assert original_model.equals(new_model)
