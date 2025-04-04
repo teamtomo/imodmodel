@@ -2,18 +2,30 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://teamtomo.org/imodmodel/</loc>
-         <lastmod>2025-03-30</lastmod>
+         <lastmod>2025-04-04</lastmod>
+    </url>
+    <url>
+         <loc>https://teamtomo.org/imodmodel/object_api/</loc>
+         <lastmod>2025-04-04</lastmod>
+    </url>
+    <url>
+         <loc>https://teamtomo.org/imodmodel/slicer_angles/</loc>
+         <lastmod>2025-04-04</lastmod>
+    </url>
+    <url>
+         <loc>https://teamtomo.org/imodmodel/z_coordinate_system_note/</loc>
+         <lastmod>2025-04-04</lastmod>
     </url>
     <url>
          <loc>https://teamtomo.org/imodmodel/examples/export_mesh/</loc>
-         <lastmod>2025-03-30</lastmod>
+         <lastmod>2025-04-04</lastmod>
     </url>
     <url>
          <loc>https://teamtomo.org/imodmodel/examples/read_mesh/</loc>
-         <lastmod>2025-03-30</lastmod>
+         <lastmod>2025-04-04</lastmod>
     </url>
     <url>
          <loc>https://teamtomo.org/imodmodel/examples/smiley/</loc>
-         <lastmod>2025-03-30</lastmod>
+         <lastmod>2025-04-04</lastmod>
     </url>
 </urlset>
