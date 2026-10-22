@@ -13,7 +13,8 @@ def two_contour_model_file() -> Path:
 @pytest.fixture
 def two_contour_model_file_handle(two_contour_model_file):
     """A file handle for a simple model with two contours."""
-    return open(two_contour_model_file, mode='rb')
+    with open(two_contour_model_file, mode='rb') as file_handle:
+        yield file_handle
 
 
 @pytest.fixture
@@ -31,7 +32,8 @@ def meshed_curvature_model_file() -> Path:
 @pytest.fixture
 def meshed_curvature_model_file_handle(meshed_curvature_model_file):
     """A file handle with curvature measurements from imodcurvature"""
-    return open(meshed_curvature_model_file, mode='rb')
+    with open(meshed_curvature_model_file, mode='rb') as file_handle:
+        yield file_handle
 
 @pytest.fixture
 def slicer_angle_model_file() -> Path:
@@ -41,7 +43,8 @@ def slicer_angle_model_file() -> Path:
 @pytest.fixture
 def slicer_angle_model_file_handle(slicer_angle_model_file):
     """A file handle with Mohammed's slicerangle measurements."""
-    return open(slicer_angle_model_file, mode='rb')
+    with open(slicer_angle_model_file, mode='rb') as file_handle:
+        yield file_handle
 
 @pytest.fixture
 def multiple_objects_model_file() -> Path:
@@ -51,7 +54,8 @@ def multiple_objects_model_file() -> Path:
 @pytest.fixture
 def multiple_objects_model_file_handle(slicer_angle_model_file):
     """A file handle with multiple object data."""
-    return open(slicer_angle_model_file, mode='rb')
+    with open(slicer_angle_model_file, mode='rb') as file_handle:
+        yield file_handle
 
 @pytest.fixture
 def point_sizes_model_file() -> Path:
@@ -61,4 +65,5 @@ def point_sizes_model_file() -> Path:
 @pytest.fixture
 def point_sizes_model_file_handle(point_sizes_model_file):
     """A file handle with multiple object data."""
-    return open(point_sizes_model_file, mode='rb')
+    with open(point_sizes_model_file, mode='rb') as file_handle:
+        yield file_handle
