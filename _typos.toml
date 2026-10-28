@@ -1,0 +1,8 @@
+# https://github.com/crate-ci/typos/blob/master/docs/reference.md
+[files]
+# notebook outputs embed minified JavaScript
+extend-exclude = ["*.ipynb"]
+
+[default.extend-identifiers]
+# public field name on the IMOD object model
+scale_wdth = "scale_wdth"
