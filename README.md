@@ -17,7 +17,7 @@ in Python.
 ```python
 import imodmodel
 
-df = imodmodel.read('my_model_file.mod')
+df = imodmodel.read("my_model_file.mod")
 ```
 
 ```ipython
@@ -35,7 +35,7 @@ Out[3]:
 ### Write IMOD models from a pandas DataFrame
 
 ```python
-imodmodel.write(df, 'my_new_modelfile.mod')
+imodmodel.write(df, "my_new_modelfile.mod")
 ```
 
 For more advanced use cases we also provide an object-based API.

@@ -1,12 +1,13 @@
-import pytest
 import numpy as np
+import pytest
+
 from imodmodel import ImodModel
 from imodmodel.models import (
+    IMAT,
+    SLAN,
     Contour,
     ContourHeader,
     Mesh,
-    IMAT,
-    SLAN,
     MeshHeader,
     Object,
     ObjectHeader,
@@ -16,10 +17,9 @@ from imodmodel.models import (
 @pytest.mark.parametrize(
     "file_fixture_contour, meshes_expected",
     [
-        ('two_contour_model_file', 0),
-        ('meshed_contour_model_file', 1),
-
-    ]
+        ("two_contour_model_file", 0),
+        ("meshed_contour_model_file", 1),
+    ],
 )
 def test_read_contour(file_fixture_contour, meshes_expected, request):
     """Check the model based API"""
@@ -36,11 +36,12 @@ def test_read_contour(file_fixture_contour, meshes_expected, request):
         assert isinstance(model.objects[0].meshes[0], Mesh)
         assert isinstance(model.objects[0].meshes[0].header, MeshHeader)
 
+
 @pytest.mark.parametrize(
     "file_fixture_slicer_angle",
     [
-        ('slicer_angle_model_file'),
-    ]
+        ("slicer_angle_model_file"),
+    ],
 )
 def test_read_slicer_angle(file_fixture_slicer_angle, request):
     """Check the model based API"""
@@ -53,11 +54,12 @@ def test_read_slicer_angle(file_fixture_slicer_angle, request):
     # Check that the label is string
     assert isinstance(model.slicer_angles[0].label, str)
 
+
 @pytest.mark.parametrize(
-    "file_fixture_multiple_objects, objects_expected", 
+    "file_fixture_multiple_objects, objects_expected",
     [
-        ('multiple_objects_model_file', 3),
-    ]
+        ("multiple_objects_model_file", 3),
+    ],
 )
 def test_multiple_objects(file_fixture_multiple_objects, objects_expected, request):
     file = request.getfixturevalue(file_fixture_multiple_objects)
@@ -76,18 +78,21 @@ def test_read_minx(meshed_contour_model_file):
     """Check reading of model to image transformation information."""
     model = ImodModel.from_file(meshed_contour_model_file)
     assert isinstance(model, ImodModel)
-    assert model.minx.cscale == pytest.approx((10.680000, 10.680000, 10.680000), abs=1e-6)
+    assert model.minx.cscale == pytest.approx(
+        (10.680000, 10.680000, 10.680000), abs=1e-6
+    )
     assert model.minx.ctrans == pytest.approx((-2228.0, 2228.0, 681.099976), abs=1e-6)
     assert model.minx.crot == pytest.approx((0.0, 0.0, 0.0), abs=1e-6)
+
 
 def test_point_sizes(point_sizes_model_file):
     model = ImodModel.from_file(point_sizes_model_file)
     assert isinstance(model, ImodModel)
-    
+
     # check point sizes are on contour in object with point sizes
     object_with_point_sizes = model.objects[0]
     assert isinstance(object_with_point_sizes.contours[0].point_sizes, np.ndarray)
-    
+
     # check point sizes aren't on contour in object without point sizes
     object_without_point_sizes = model.objects[1]
     assert object_without_point_sizes.contours[0].point_sizes is None
@@ -103,9 +108,13 @@ def test_read_write_read_roundtrip(two_contour_model_file, tmp_path):
     assert model.header == model2.header
     assert model.objects[0].header == model2.objects[0].header
     assert model.objects[0].contours[0].header == model2.objects[0].contours[0].header
-    assert np.allclose(model.objects[0].contours[0].points, model2.objects[0].contours[0].points)
+    assert np.allclose(
+        model.objects[0].contours[0].points, model2.objects[0].contours[0].points
+    )
     assert model.objects[0].contours[1].header == model2.objects[0].contours[1].header
-    assert np.allclose(model.objects[0].contours[1].points, model2.objects[0].contours[1].points)
+    assert np.allclose(
+        model.objects[0].contours[1].points, model2.objects[0].contours[1].points
+    )
 
 
 def test_read_write_read_roundtrip_mesh(meshed_contour_model_file, tmp_path):
@@ -118,8 +127,12 @@ def test_read_write_read_roundtrip_mesh(meshed_contour_model_file, tmp_path):
     assert model.header == model2.header
     assert model.objects[0].header == model2.objects[0].header
     assert model.objects[0].meshes[0].header == model2.objects[0].meshes[0].header
-    assert np.allclose(model.objects[0].meshes[0].vertices, model2.objects[0].meshes[0].vertices)
-    assert np.allclose(model.objects[0].meshes[0].indices, model2.objects[0].meshes[0].indices)
+    assert np.allclose(
+        model.objects[0].meshes[0].vertices, model2.objects[0].meshes[0].vertices
+    )
+    assert np.allclose(
+        model.objects[0].meshes[0].indices, model2.objects[0].meshes[0].indices
+    )
 
 
 def test_read_write_read_roundtrip_slicer_angles(slicer_angle_model_file, tmp_path):
@@ -129,7 +142,7 @@ def test_read_write_read_roundtrip_slicer_angles(slicer_angle_model_file, tmp_pa
     model2 = ImodModel.from_file(tmp_path / "test_model.imod")
     assert model.slicer_angles[0].label == model2.slicer_angles[0].label
 
-    
+
 def test_color_syntactic_sugar(two_contour_model_file):
     """Check that the color property of the model object is a tuple."""
     model = ImodModel.from_file(two_contour_model_file)
@@ -153,32 +166,36 @@ def test_color_syntactic_sugar(two_contour_model_file):
     test_object.header.blue = 0.8
     assert test_object.color == (0.5, 0.2, 0.8)
 
+
 def test_object_creation_and_write(tmp_path):
-    
     test_model = ImodModel(
-        objects = [
+        objects=[
             Object(
-            contours = [
-                Contour(
-                    points = np.random.rand(23, 3),  # Random points for the contour
-                ) for _ in range(25)
-            ]) for _ in range(30)
+                contours=[
+                    Contour(
+                        points=np.random.rand(23, 3),  # Random points for the contour
+                    )
+                    for _ in range(25)
+                ]
+            )
+            for _ in range(30)
         ]
     )
 
     test_model.to_file(tmp_path / "test_model_many_contours.imod")
-    
+
     # Now read the model back to check if it was written correctly
     model_read_back = ImodModel.from_file(tmp_path / "test_model_many_contours.imod")
     assert isinstance(model_read_back, ImodModel)
     assert len(model_read_back.objects) == 30
-    assert len(model_read_back.objects[0].contours) == 25  
-    assert model_read_back.objects[0].contours[0].points.shape == (23, 3) 
+    assert len(model_read_back.objects[0].contours) == 25
+    assert model_read_back.objects[0].contours[0].points.shape == (23, 3)
 
-def test_model_flags(two_contour_model_file,tmp_path):
+
+def test_model_flags(two_contour_model_file, tmp_path):
     """Check the model flags property."""
     model = ImodModel.from_file(two_contour_model_file)
-    
+
     # Check the initial flags
     assert model.header.flags.flag0 is False
     assert model.header.flags.current_tilt_angles_are_stored_correctly is True
@@ -193,13 +210,15 @@ def test_model_flags(two_contour_model_file,tmp_path):
     # Read back the model to check if flags were set correctly
     read_back_model = ImodModel.from_file(tmp_path / "test_model_with_flags.imod")
     assert read_back_model.header.flags.flag0 is True
-    assert read_back_model.header.flags.current_tilt_angles_are_stored_correctly is False
+    assert (
+        read_back_model.header.flags.current_tilt_angles_are_stored_correctly is False
+    )
 
 
-def test_object_flags(two_contour_model_file,tmp_path):
+def test_object_flags(two_contour_model_file, tmp_path):
     model = ImodModel.from_file(two_contour_model_file)
     initial_object = model.objects[0]
-    
+
     # Check the initial flags
     assert initial_object.header.flags.flag0 is False
     assert initial_object.header.flags.draw_label is True
@@ -212,8 +231,8 @@ def test_object_flags(two_contour_model_file,tmp_path):
     model.to_file(tmp_path / "test_object_flags.mode")
     read_back_model = ImodModel.from_file(tmp_path / "test_object_flags.mode")
     read_back_object = read_back_model.objects[0]
-    assert read_back_object.header.flags.flag0 == True
-    assert read_back_object.header.flags.draw_label == False
+    assert read_back_object.header.flags.flag0
+    assert not read_back_object.header.flags.draw_label
 
 
 def test_contour_flags(two_contour_model_file, tmp_path):
@@ -237,6 +256,7 @@ def test_contour_flags(two_contour_model_file, tmp_path):
     # Verify the flags after reading back
     assert read_back_contour.header.flags.flag0 is True
     assert int(read_back_contour.header.flags) == 1
+
 
 def test_mesh_flags(meshed_contour_model_file, tmp_path):
     """Check the mesh flags property."""
