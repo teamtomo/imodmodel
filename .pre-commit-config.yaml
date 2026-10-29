@@ -1,3 +1,4 @@
+# enable pre-commit.ci at https://pre-commit.ci/
 ci:
   autoupdate_schedule: monthly
   autofix_commit_msg: "style(pre-commit.ci): auto fixes [...]"
@@ -14,3 +15,21 @@ repos:
     hooks:
       - id: typos
         args: [--force-exclude]  # omitting --write-changes
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.10
+    hooks:
+      - id: ruff
+        args: [--fix]  # may also add '--unsafe-fixes'
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.15.0
+    hooks:
+      - id: mypy
+        files: "^src/"
+        # you have to add the things you want to type check against here
+        additional_dependencies:
+          - numpy
+          - pandas-stubs
+          - pydantic>=2
