@@ -1,41 +1,44 @@
+"""Writers for the IMOD binary model file format."""
 
+from collections.abc import Sequence
 from struct import Struct
-from typing import BinaryIO, List, Union
+from typing import Any, BinaryIO
 
 import numpy as np
-from pydantic import BaseModel
 
+from .binary_specification import ModFileSpecification
 from .models import (
     ID,
     IMAT,
+    MINX,
     SLAN,
     Contour,
     ContourHeader,
     GeneralStorage,
+    ImodModel,
+    IntFlagModel,
     Mesh,
     MeshHeader,
-    MINX,
-    ImodModel,
     ModelHeader,
     Object,
     ObjectHeader,
 )
-from .binary_specification import ModFileSpecification
 
 
-
-def _write_to_format_str(file: BinaryIO, format_str: str, data: Union[tuple, list]):
+def _write_to_format_str(
+    file: BinaryIO, format_str: str, data: Sequence[Any] | np.ndarray
+) -> None:
     # Convert data to bytes
-    data = [s.encode("utf-8") if isinstance(s, str) else s for s in data]
+    values: list[Any] = [s.encode("utf-8") if isinstance(s, str) else s for s in data]
     # Convert flag BaseModels to int
-    data = [int(s) if isinstance(s, BaseModel) else s for s in data]
+    values = [int(s) if isinstance(s, IntFlagModel) else s for s in values]
     struct = Struct(format_str)
-    file.write(struct.pack(*data))
+    file.write(struct.pack(*values))
 
 
-def _write_to_specification(file: BinaryIO, specification: dict, data: dict):
+def _write_to_specification(file: BinaryIO, specification: dict, data: dict) -> None:
     format_str = f">{''.join(specification.values())}"
-    data_1d = []
+    data_1d: list[Any] = []
     for key, value in specification.items():
         if value[0].isdigit() and value[-1] in "iIlLqQfd":
             data_1d.extend(data[key])
@@ -44,65 +47,70 @@ def _write_to_specification(file: BinaryIO, specification: dict, data: dict):
     _write_to_format_str(file, format_str, data_1d)
 
 
-def _write_id(file: BinaryIO, id: ID):
+def _write_id(file: BinaryIO, id: ID) -> None:
     _write_to_specification(file, ModFileSpecification.ID, id.dict())
 
 
-def _write_model_header(file: BinaryIO, header: ModelHeader):
+def _write_model_header(file: BinaryIO, header: ModelHeader) -> None:
     _write_to_specification(file, ModFileSpecification.MODEL_HEADER, dict(header))
 
 
-def _write_object_header(file: BinaryIO, header: ObjectHeader):
+def _write_object_header(file: BinaryIO, header: ObjectHeader) -> None:
     _write_to_specification(file, ModFileSpecification.OBJECT_HEADER, dict(header))
 
 
-def _write_contour_header(file: BinaryIO, header: ContourHeader):
+def _write_contour_header(file: BinaryIO, header: ContourHeader) -> None:
     _write_to_specification(file, ModFileSpecification.CONTOUR_HEADER, dict(header))
 
 
-def _write_mesh_header(file: BinaryIO, header: MeshHeader):
+def _write_mesh_header(file: BinaryIO, header: MeshHeader) -> None:
     _write_to_specification(file, ModFileSpecification.MESH_HEADER, dict(header))
 
 
-def _write_imat(file: BinaryIO, imat: IMAT):
+def _write_imat(file: BinaryIO, imat: IMAT) -> None:
     _write_chunk_size(file, 48)
     _write_to_specification(file, ModFileSpecification.IMAT, imat.dict())
 
 
-def _write_minx(file: BinaryIO, minx: MINX):
+def _write_minx(file: BinaryIO, minx: MINX) -> None:
     _write_chunk_size(file, 72)
     _write_to_specification(file, ModFileSpecification.MINX, minx.dict())
 
 
-def _write_slicer_angle(file: BinaryIO, slicer_angle: SLAN):
+def _write_slicer_angle(file: BinaryIO, slicer_angle: SLAN) -> None:
     _write_chunk_size(file, 48)
     _write_to_specification(file, ModFileSpecification.SLAN, slicer_angle.dict())
 
 
-def _write_general_storage(file: BinaryIO, storages: List[GeneralStorage]):
+def _write_general_storage(file: BinaryIO, storages: list[GeneralStorage]) -> None:
     size = len(storages) * 12
     _write_chunk_size(file, size)
     for storage in storages:
-        _write_to_format_str(file, '>hh', (storage.type, storage.flags))
-        _write_to_format_str(file, '>i' if isinstance(storage.index, int) else '>f', (storage.index,))
-        _write_to_format_str(file, '>i' if isinstance(storage.value, int) else '>f', (storage.value,))
+        _write_to_format_str(file, ">hh", (storage.type, storage.flags))
+        _write_to_format_str(
+            file, ">i" if isinstance(storage.index, int) else ">f", (storage.index,)
+        )
+        _write_to_format_str(
+            file, ">i" if isinstance(storage.value, int) else ">f", (storage.value,)
+        )
 
 
-def _write_chunk_size(file: BinaryIO, size: int):
+def _write_chunk_size(file: BinaryIO, size: int) -> None:
     file.write(size.to_bytes(4, byteorder="big"))
 
 
-def _write_point_sizes(file: BinaryIO, point_sizes: np.ndarray):
+def _write_point_sizes(file: BinaryIO, point_sizes: np.ndarray) -> None:
     point_sizes = point_sizes.flatten()
     _write_control_sequence(file, "SIZE")
-    _write_chunk_size(file, 4 *  len(point_sizes))
+    _write_chunk_size(file, 4 * len(point_sizes))
     _write_to_format_str(file, f">{'f' * len(point_sizes)}", point_sizes)
 
-def _write_control_sequence(file: BinaryIO, sequence: str):
+
+def _write_control_sequence(file: BinaryIO, sequence: str) -> None:
     file.write(sequence.encode("utf-8"))
 
 
-def _write_contour(file: BinaryIO, contour: Contour):
+def _write_contour(file: BinaryIO, contour: Contour) -> None:
     _write_contour_header(file, contour.header)
     points = contour.points.flatten()
     _write_to_format_str(file, f">{'f' * len(points)}", points)
@@ -113,7 +121,7 @@ def _write_contour(file: BinaryIO, contour: Contour):
         _write_general_storage(file, contour.extra)
 
 
-def _write_mesh(file: BinaryIO, mesh: Mesh):
+def _write_mesh(file: BinaryIO, mesh: Mesh) -> None:
     _write_mesh_header(file, mesh.header)
     vertices = mesh.raw_vertices.flatten()
     indices = mesh.raw_indices.flatten()
@@ -123,7 +131,7 @@ def _write_mesh(file: BinaryIO, mesh: Mesh):
         _write_general_storage(file, mesh.extra)
 
 
-def _write_object(file: BinaryIO, obj: Object):
+def _write_object(file: BinaryIO, obj: Object) -> None:
     _write_object_header(file, obj.header)
     for contour in obj.contours:
         _write_control_sequence(file, "CONT")
@@ -139,7 +147,8 @@ def _write_object(file: BinaryIO, obj: Object):
         _write_general_storage(file, obj.extra)
 
 
-def write_model(file: BinaryIO, model: ImodModel):
+def write_model(file: BinaryIO, model: ImodModel) -> None:
+    """Write an IMOD model to a binary file."""
     model.update_sizes()
     _write_id(file, model.id)
     _write_model_header(file, model.header)

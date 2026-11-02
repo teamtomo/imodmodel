@@ -8,7 +8,7 @@ These annotations can be read in by setting `annotation='slicer_angle'` when cal
 ```python
 import imodmodel
 
-df = imodmodel.read('file_with_slicer_angles.mod', annotation='slicer_angles')
+df = imodmodel.read("file_with_slicer_angles.mod", annotation="slicer_angles")
 ```
 
 ```ipython

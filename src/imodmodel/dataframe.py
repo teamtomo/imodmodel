@@ -1,24 +1,24 @@
-from typing import List
+"""Conversion of IMOD models to pandas DataFrames."""
 
 import pandas as pd
 
-from .models import Contour, ImodModel, SLAN
+from .models import SLAN, Contour, ImodModel
 
 
-def model_to_dataframe(model: ImodModel, annotation: str = 'contour') -> pd.DataFrame:
+def model_to_dataframe(model: ImodModel, annotation: str = "contour") -> pd.DataFrame:
     """Convert ImodModel model into a pandas DataFrame."""
-    object_dfs: List[pd.DataFrame] = []
-    if annotation == 'slicer_angles':
+    object_dfs: list[pd.DataFrame] = []
+    if annotation == "slicer_angles":
         if len(model.slicer_angles) == 0:
             raise ValueError("Model has no slicer angles.")
         for slicer_angle_idx, slicer_angle in enumerate(model.slicer_angles):
             slicer_angle_df = slicer_angle_to_dataframe(slicer_angle, slicer_angle_idx)
             object_dfs.append(slicer_angle_df)
-    elif annotation == 'contour':
-        for object_idx, object in enumerate(model.objects):
-                for contour_idx, contour in enumerate(object.contours):
-                    contour_df = contour_to_dataframe(contour, object_idx, contour_idx)
-                    object_dfs.append(contour_df)
+    elif annotation == "contour":
+        for object_idx, obj in enumerate(model.objects):
+            for contour_idx, contour in enumerate(obj.contours):
+                contour_df = contour_to_dataframe(contour, object_idx, contour_idx)
+                object_dfs.append(contour_df)
     else:
         raise ValueError(f"Unknown annotation type: {annotation}")
     return pd.concat(object_dfs)
