@@ -535,7 +535,23 @@ class ModelHeader(BaseModel):
 class ImodModel(BaseModel):
     """Contents of an IMOD model file.
 
-    https://bio3d.colorado.edu/imod/doc/binspec.html
+    See the binary specification at
+    https://bio3d.colorado.edu/imod/doc/binspec.html.
+
+    Attributes
+    ----------
+    id : ID
+        File identifier and format version.
+    header : ModelHeader
+        Model header: name, image size, scale and other global settings.
+    objects : list[Object]
+        Objects in the model, each holding contours and optional meshes.
+    slicer_angles : list[SLAN]
+        Saved slicer angles (``SLAN`` chunks).
+    minx : MINX or None
+        Model-to-image transformation (``MINX`` chunk), if present.
+    extra : list[GeneralStorage]
+        General storage chunks that are kept but not interpreted.
     """
 
     id: ID = ID(IMOD_file_id="IMOD", version_id="V1.2")
@@ -553,7 +569,18 @@ class ImodModel(BaseModel):
 
     @classmethod
     def from_file(cls, filename: os.PathLike) -> "ImodModel":
-        """Read an IMOD model from disk."""
+        """Read an IMOD model from disk.
+
+        Parameters
+        ----------
+        filename : os.PathLike
+            Path to the IMOD model file.
+
+        Returns
+        -------
+        ImodModel
+            The parsed model.
+        """
         from .parsers import parse_model
 
         with open(filename, "rb") as file:
@@ -563,7 +590,29 @@ class ImodModel(BaseModel):
     def from_dataframe(
         cls, dataframe: pd.DataFrame, type: ContourType = ContourType.SCATTERED
     ) -> "ImodModel":
-        """Construct an ImodModel instance from a pandas DataFrame."""
+        """Construct an ImodModel instance from a pandas DataFrame.
+
+        Parameters
+        ----------
+        dataframe : pandas.DataFrame
+            Points with ``x``, ``y`` and ``z`` columns. Optional
+            ``object_id`` and ``contour_id`` columns group the points into
+            objects and contours; missing ones are added to ``dataframe``
+            with value 0.
+        type : ContourType, default ContourType.SCATTERED
+            Contour type set on every object.
+
+        Returns
+        -------
+        ImodModel
+            A model with one object per ``object_id`` and one contour per
+            ``contour_id`` within it.
+
+        Raises
+        ------
+        ValueError
+            If ``dataframe`` is missing an ``x``, ``y`` or ``z`` column.
+        """
         # Ensure the DataFrame has the required columns
         required_columns = ["x", "y", "z"]
         for col in required_columns:
@@ -597,7 +646,13 @@ class ImodModel(BaseModel):
         return model
 
     def to_file(self, filename: os.PathLike) -> None:
-        """Write an IMOD model to disk."""
+        """Write an IMOD model to disk.
+
+        Parameters
+        ----------
+        filename : os.PathLike
+            Path of the IMOD model file to write.
+        """
         from .writers import write_model
 
         with open(filename, "wb") as file:
