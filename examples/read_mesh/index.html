@@ -943,12 +943,14 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </clipboard-copy>
 </div>
 <div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">trimesh</span>
+
 <span class="n">scene</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">Scene</span><span class="p">()</span>
 <span class="k">for</span> <span class="n">mesh</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meshes</span><span class="p">:</span>
     <span class="n">scene</span><span class="o">.</span><span class="n">add_geometry</span><span class="p">(</span><span class="n">trimesh</span><span class="o">.</span><span class="n">Trimesh</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">vertices</span><span class="p">,</span> <span class="n">faces</span><span class="o">=</span><span class="n">mesh</span><span class="o">.</span><span class="n">indices</span><span class="p">))</span>
 <span class="n">scene</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 <div class="clipboard-copy-txt" id="cell-3">import trimesh
+
 scene = trimesh.Scene()
 for mesh in model.objects[0].meshes:
     scene.add_geometry(trimesh.Trimesh(vertices=mesh.vertices, faces=mesh.indices))
@@ -2325,32 +2327,40 @@ init();&lt;/script&gt;&lt;/body&gt;
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">molecularnodes</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mn</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">bpy</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">databpy</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">bpy</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">molecularnodes</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mn</span>
+
 <span class="n">mn</span><span class="o">.</span><span class="n">register</span><span class="p">()</span>
 <span class="n">mn</span><span class="o">.</span><span class="n">template</span><span class="o">.</span><span class="n">install</span><span class="p">()</span>
 <span class="n">can</span> <span class="o">=</span> <span class="n">mn</span><span class="o">.</span><span class="n">Canvas</span><span class="p">()</span>
 <span class="n">can</span><span class="o">.</span><span class="n">scene_reset</span><span class="p">()</span>
 
-<span class="n">obj</span> <span class="o">=</span> <span class="n">databpy</span><span class="o">.</span><span class="n">create_object</span><span class="p">(</span><span class="n">vertices</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">vertices</span><span class="o">/</span><span class="mi">10</span><span class="p">,</span><span class="n">faces</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
-<span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s1">'SELECT'</span><span class="p">)</span>
+<span class="n">obj</span> <span class="o">=</span> <span class="n">databpy</span><span class="o">.</span><span class="n">create_object</span><span class="p">(</span>
+    <span class="n">vertices</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">vertices</span> <span class="o">/</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">faces</span><span class="o">=</span><span class="n">model</span><span class="o">.</span><span class="n">objects</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">meshes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">indices</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">select_all</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">"SELECT"</span><span class="p">)</span>
 <span class="n">bpy</span><span class="o">.</span><span class="n">ops</span><span class="o">.</span><span class="n">object</span><span class="o">.</span><span class="n">shade_smooth</span><span class="p">()</span>
 <span class="n">can</span><span class="o">.</span><span class="n">frame_object</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
 <span class="n">can</span><span class="o">.</span><span class="n">render_engine</span> <span class="o">=</span> <span class="s2">"EEVEE"</span>
 <span class="n">can</span><span class="o">.</span><span class="n">resolution</span> <span class="o">=</span> <span class="p">(</span><span class="mi">960</span><span class="p">,</span> <span class="mi">540</span><span class="p">)</span>
 <span class="n">can</span><span class="o">.</span><span class="n">snapshot</span><span class="p">()</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-6">import molecularnodes as mn
+<div class="clipboard-copy-txt" id="cell-6">import bpy
 import databpy
-import bpy
+import molecularnodes as mn
+
 mn.register()
 mn.template.install()
 can = mn.Canvas()
 can.scene_reset()
 
-obj = databpy.create_object(vertices=model.objects[0].meshes[0].vertices/10,faces=model.objects[0].meshes[0].indices)
-bpy.ops.object.select_all(action='SELECT')
+obj = databpy.create_object(
+    vertices=model.objects[0].meshes[0].vertices / 10,
+    faces=model.objects[0].meshes[0].indices,
+)
+bpy.ops.object.select_all(action="SELECT")
 bpy.ops.object.shade_smooth()
 can.frame_object(obj)
 can.render_engine = "EEVEE"

@@ -784,13 +784,15 @@ span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">imodmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImodModel</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">trimesh</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">imodmodel</span><span class="w"> </span><span class="kn">import</span> <span class="n">ImodModel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">imodmodel.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">Mesh</span><span class="p">,</span> <span class="n">Object</span>
-<span class="kn">import</span><span class="w"> </span><span class="nn">trimesh</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-1">from imodmodel import ImodModel
-from imodmodel.models import Mesh, Object
-import trimesh</div>
+<div class="clipboard-copy-txt" id="cell-1">import trimesh
+
+from imodmodel import ImodModel
+from imodmodel.models import Mesh, Object</div>
 </div>
 </div>
 </div>
@@ -815,9 +817,9 @@ import trimesh</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">teapot</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s1">'data/teapot.obj'</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">teapot</span> <span class="o">=</span> <span class="n">trimesh</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">"data/teapot.obj"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-2">teapot = trimesh.load('data/teapot.obj')</div>
+<div class="clipboard-copy-txt" id="cell-2">teapot = trimesh.load("data/teapot.obj")</div>
 </div>
 </div>
 </div>
@@ -877,9 +879,9 @@ model.objects[0].meshes[0].indices = teapot.faces</div>
 </div>
 </clipboard-copy>
 </div>
-<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s1">'teapot.mod'</span><span class="p">)</span>
+<div class="highlight-ipynb hl-python"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">to_file</span><span class="p">(</span><span class="s2">"teapot.mod"</span><span class="p">)</span>
 </pre></div>
-<div class="clipboard-copy-txt" id="cell-4">model.to_file('teapot.mod')</div>
+<div class="clipboard-copy-txt" id="cell-4">model.to_file("teapot.mod")</div>
 </div>
 </div>
 </div>
